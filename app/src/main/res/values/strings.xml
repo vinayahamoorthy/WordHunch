@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WordHunch</string>
+
+    <!-- Network Strings -->
+    <!--<string name="RetroFit_API_URI">http://photo-api.guesthouser.com</string> &lt;!&ndash; Production &ndash;&gt;-->
+    <string name="RetroFit_API_URI">https://www.collinsdictionary.com</string> <!-- Staging -->
+    <string name="RetroFit_API_Fail">Could not connect to the server. Please check your internet connection.</string>
 </resources>

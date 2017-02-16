@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_ring"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.daksh.wordhunch.RingActivity">
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rinkInputList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/rinkInput"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     <TextView
+        android:id="@+id/rinkWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="PI"
+        android:layout_alignParentBottom="true"
+        android:paddingStart="15dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        tools:ignore="RtlSymmetry" />
+
+    <EditText
+        android:id="@+id/rinkInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingStart="0.5dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:paddingEnd="15dp"
+        android:textAllCaps="true"
+        android:inputType="text"
+        android:lines="1"
+        android:text=""
+        android:layout_toEndOf="@id/rinkWord"
+        android:textAppearance="@style/TextAppearance.AppCompat">
+
+        <requestFocus />
+    </EditText>
+
 </RelativeLayout>
