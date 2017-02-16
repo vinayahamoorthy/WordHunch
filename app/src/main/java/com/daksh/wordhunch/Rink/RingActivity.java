@@ -303,7 +303,7 @@ public class RingActivity extends AppCompatActivity implements
                                     hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), 1);
                             else {
                                 if (hmAlternateWordList.containsKey(String.valueOf(txWord.getText().charAt(1))))
-                                    hmAlternateWordList.put(String.valueOf(txWord.getText().charAt(1)), hmAlternateWordList.get(Integer.valueOf(txWord.getText().charAt(1))) + 1);
+                                    hmAlternateWordList.put(String.valueOf(txWord.getText().charAt(1)), hmAlternateWordList.get(String.valueOf(txWord.getText().charAt(1))) + 1);
                                 else
                                     hmAlternateWordList.put(String.valueOf(txWord.getText().charAt(1)), 1);
                             }
