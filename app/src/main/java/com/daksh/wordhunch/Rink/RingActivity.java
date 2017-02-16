@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,8 +31,10 @@ import com.daksh.wordhunch.Util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import io.github.krtkush.lineartimer.LinearTimer;
 import io.github.krtkush.lineartimer.LinearTimerView;
@@ -293,14 +296,43 @@ public class RingActivity extends AppCompatActivity implements
                     for(String suggestion : lsSuggestions) {
                         suggestion = suggestion.toUpperCase();
                         if(suggestion.charAt(0) == txWord.getText().charAt(0))
-                            if(hmAlternateWordList.containsKey(suggestion.charAt(1)))
-                                hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), hmAlternateWordList.get(suggestion.charAt(1)) + 1);
-                            else
-                                hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), 1);
+                            if(suggestion.charAt(1) != txWord.getText().charAt(1))
+                                if(hmAlternateWordList.containsKey(String.valueOf(suggestion.charAt(1))))
+                                    hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), hmAlternateWordList.get(String.valueOf(suggestion.charAt(1))) + 1);
+                                else
+                                    hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), 1);
+                            else {
+                                if (hmAlternateWordList.containsKey(String.valueOf(txWord.getText().charAt(1))))
+                                    hmAlternateWordList.put(String.valueOf(txWord.getText().charAt(1)), hmAlternateWordList.get(Integer.valueOf(txWord.getText().charAt(1))) + 1);
+                                else
+                                    hmAlternateWordList.put(String.valueOf(txWord.getText().charAt(1)), 1);
+                            }
                     }
 
+                    //If no alternate words were found, reset challenge
                     if(hmAlternateWordList.isEmpty())
                         setChallenge();
+                    else {
+                        int integers = 0;
+                        String string = "";
+                        Iterator<String> iterator = hmAlternateWordList.keySet().iterator();
+                        while (iterator.hasNext()) {
+                            String strSuggestion = iterator.next();
+                            int intTimes = hmAlternateWordList.get(strSuggestion);
+                            if(integers < intTimes && intTimes > 1) {
+                                integers = intTimes;
+                                string = strSuggestion;
+                            }
+                        }
+
+                        if(!TextUtils.isEmpty(string))
+                            txWord.setText(
+                                    String.valueOf(txWord.getText().charAt(0))
+                                            + string
+                            );
+                        else
+                            setChallenge();
+                    }
 
                     DialogClass.dismissBirdDialog(RingActivity.this);
                 } else
