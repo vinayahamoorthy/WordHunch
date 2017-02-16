@@ -1,10 +1,11 @@
-package com.daksh.wordhunch.Network;
+package com.daksh.wordhunch.Network.AutoComplete;
 
-import java.util.List;
+import com.daksh.wordhunch.Network.RetroFit;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class RFAutocomplete extends RetroFit {
@@ -30,9 +31,12 @@ public class RFAutocomplete extends RetroFit {
     }
 
     public interface SuggestionsAPIInterface {
-        @GET("/autocomplete/")
-        Call<List<String>> getSuggestions(
-                @Query("q") String strQuery
+        @GET("{dictCode}/search/didyoumean")
+        Call<DMSuggestions> getSuggestions(
+                @Path("dictCode") String strDictCode,
+                @Query("q") String strQuery,
+                @Query("entrynumber") int intEntryNumber,
+                @Query("page") int intPageNumber
         );
     }
 }

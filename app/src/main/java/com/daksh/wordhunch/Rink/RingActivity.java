@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.textservice.SentenceSuggestionsInfo;
@@ -16,12 +17,19 @@ import android.view.textservice.SuggestionsInfo;
 import android.view.textservice.TextInfo;
 import android.view.textservice.TextServicesManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daksh.wordhunch.Network.AutoComplete.DMSuggestions;
+import com.daksh.wordhunch.Network.AutoComplete.RFAutocomplete;
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.Util.DialogClass;
+import com.daksh.wordhunch.Util.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,13 +40,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RingActivity extends AppCompatActivity implements
-        Callback<List<String>>, TextView.OnEditorActionListener,
-        SpellCheckerSession.SpellCheckerSessionListener, TextWatcher, LinearTimer.TimerListener {
+        TextView.OnEditorActionListener,
+        SpellCheckerSession.SpellCheckerSessionListener, TextWatcher,
+        LinearTimer.TimerListener, Callback<DMSuggestions> {
 
     //The field where the user inputs the words
     private EditText etUserInput;
     //Field which holds the first two alphabets for the user to build the word on
     private TextView txWord;
+    //A cover view that displays a replay button when the timer expires
+    private RelativeLayout cover;
+    //A retry button displayed on the cover
+    private ImageView retry;
     //The RecyclerView which holds the words inserted by the user
     private RecyclerView rvUserInputs;
     //The adapter which builds the word list to be displayed on the RecyclerView
@@ -53,6 +66,26 @@ public class RingActivity extends AppCompatActivity implements
     //The textview that shows the time left
     private TextView countdownText;
 
+    /**
+     * A tap listener on the replay button. Resets the game
+     */
+    private View.OnClickListener replayListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //Set countdown timer to 0
+            linearTimer.restartTimer();
+
+            //Disable editing on the input field
+            etUserInput.setEnabled(true);
+            txWord.setEnabled(true);
+            setChallenge();
+            etUserInput.requestFocus();
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInputFromInputMethod(etUserInput.getWindowToken(), InputMethodManager.SHOW_FORCED);
+            cover.setVisibility(View.GONE);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +96,9 @@ public class RingActivity extends AppCompatActivity implements
         rvUserInputs = (RecyclerView) findViewById(R.id.rinkInputList);
         countdownText = (TextView) findViewById(R.id.countdownText);
         timerView = (LinearTimerView) findViewById(R.id.countdown);
+        cover = (RelativeLayout) findViewById(R.id.cover);
+        retry = (ImageView) findViewById(R.id.retry);
+        retry.setOnClickListener(replayListener);
 
         //Build the timer and start
         linearTimer = new LinearTimer.Builder()
@@ -82,6 +118,9 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        //Set Challenge
+        setChallenge();
 
         //Force open the keyboard
         if(etUserInput != null) {
@@ -105,26 +144,8 @@ public class RingActivity extends AppCompatActivity implements
         spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
 
         linearTimer.startTimer();
-
-//        //Get word list
-//        RFAutocomplete.SuggestionsAPIInterface apiInterface = RFAutocomplete.getSuggestionsAPIInterface();
-//        Call<List<String>> listCall = apiInterface.getSuggestions("PI");
-//        listCall.enqueue(RingActivity.this);
     }
 
-    @Override
-    public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-        if(response.isSuccessful())
-            if(response.body() != null && !response.body().isEmpty())
-                lsSuggestions = response.body();
-
-        adapter.setItems(lsSuggestions);
-    }
-
-    @Override
-    public void onFailure(Call<List<String>> call, Throwable t) {
-
-    }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -140,7 +161,7 @@ public class RingActivity extends AppCompatActivity implements
                         etUserInput.setText("");
 
                         //Scroll the list down so user can see the latest entry
-                        rvUserInputs.scrollToPosition(adapter.getItemCount());
+                        rvUserInputs.smoothScrollToPosition(adapter.getItemCount() - 1);
 
                         return true;
                     }
@@ -225,11 +246,70 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void animationComplete() {
+        //Set countdown timer to 0
+        countdownText.setText(String.valueOf(0));
 
+        //Disable editing on the input field
+        etUserInput.setEnabled(false);
+        txWord.setEnabled(false);
+
+        cover.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void timerTick(long l) {
         countdownText.setText(String.valueOf(l / 1000));
     }
+
+    /**
+     * The method that sets up a word challenge and confirms validations with the server
+     */
+    private void setChallenge() {
+        //Set Challenge
+        if(txWord != null)
+            txWord.setText(
+                    Util.getRandomAlphabet().toString().toUpperCase()
+                            + Util.getRandomAlphabet().toString().toUpperCase()
+            );
+
+        //Get word list
+        RFAutocomplete.SuggestionsAPIInterface apiInterface = RFAutocomplete.getSuggestionsAPIInterface();
+        Call<DMSuggestions> listCall = apiInterface.getSuggestions(
+                getString(R.string.RetroFit_API_DictCode), String.valueOf(txWord.getText()), 10, 1
+        );
+        listCall.enqueue(RingActivity.this);
+        DialogClass.showBirdDialog(RingActivity.this);
+    }
+
+    @Override
+    public void onResponse(Call<DMSuggestions> call, Response<DMSuggestions> response) {
+
+        HashMap<String, Integer> hmAlternateWordList = new HashMap<>();
+
+        if(response.isSuccessful())
+            if(response.body() != null)
+                if(response.body().getSuggestions() != null && !response.body().getSuggestions().isEmpty()) {
+                    List<String> lsSuggestions = response.body().getSuggestions();
+                    for(String suggestion : lsSuggestions) {
+                        suggestion = suggestion.toUpperCase();
+                        if(suggestion.charAt(0) == txWord.getText().charAt(0))
+                            if(hmAlternateWordList.containsKey(suggestion.charAt(1)))
+                                hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), hmAlternateWordList.get(suggestion.charAt(1)) + 1);
+                            else
+                                hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), 1);
+                    }
+                    DialogClass.dismissBirdDialog(RingActivity.this);
+                } else
+                    setChallenge();
+    }
+
+    @Override
+    public void onFailure(Call<DMSuggestions> call, Throwable t) {
+        DialogClass.dismissBirdDialog(RingActivity.this);
+    }
+
+//    txWord.setText(
+//            String.valueOf(txWord.getText().charAt(0)) + String.valueOf(suggestion.charAt(1))
+//            );
+//    DialogClass.dismissBirdDialog(RingActivity.this);
 }

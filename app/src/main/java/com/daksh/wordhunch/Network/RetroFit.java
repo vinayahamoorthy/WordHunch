@@ -5,6 +5,7 @@ import com.daksh.wordhunch.WordHunch;
 
 import java.io.IOException;
 
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -59,7 +60,7 @@ public class RetroFit {
      * built.
      * @return Returns API Interface
      */
-    static Retrofit getRetroFit() {
+    public static Retrofit getRetroFit() {
         //return Retrofit
         return retrofit;
     }
@@ -74,10 +75,13 @@ public class RetroFit {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
-            HttpUrl newRequest = originalRequest.url().newBuilder()
-                    .addQueryParameter("dictCode", "english")
+
+            //Add access key to the headers
+            Headers headers = originalRequest.headers().newBuilder()
+                    .add("accessKey", WordHunch.getContext().getString(R.string.API_Key_Collins))
                     .build();
-            return chain.proceed(originalRequest.newBuilder().url(newRequest).build());
+
+            return chain.proceed(originalRequest.newBuilder().headers(headers).build());
         }
     }
 }
