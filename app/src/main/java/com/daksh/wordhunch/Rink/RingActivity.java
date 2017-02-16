@@ -74,7 +74,7 @@ public class RingActivity extends AppCompatActivity implements
         public void onClick(View v) {
             //Set countdown timer to 0
             linearTimer.restartTimer();
-
+            adapter.clearItems();
             //Disable editing on the input field
             etUserInput.setEnabled(true);
             txWord.setEnabled(true);
@@ -298,6 +298,10 @@ public class RingActivity extends AppCompatActivity implements
                             else
                                 hmAlternateWordList.put(String.valueOf(suggestion.charAt(1)), 1);
                     }
+
+                    if(hmAlternateWordList.isEmpty())
+                        setChallenge();
+
                     DialogClass.dismissBirdDialog(RingActivity.this);
                 } else
                     setChallenge();

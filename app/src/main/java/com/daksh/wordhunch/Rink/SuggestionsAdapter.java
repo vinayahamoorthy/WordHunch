@@ -55,6 +55,16 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         SuggestionsAdapter.this.notifyDataSetChanged();
     }
 
+    /**
+     * Clears all items from the list
+     */
+    public void clearItems() {
+        if(lsItems != null)
+            lsItems.clear();
+
+        SuggestionsAdapter.this.notifyDataSetChanged();
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
