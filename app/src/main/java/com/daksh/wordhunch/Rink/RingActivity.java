@@ -49,6 +49,9 @@ public class RingActivity extends AppCompatActivity implements
     private SpellCheckerSession spellCheckerSession;
     //A circular progress bar to keep track of time
     private LinearTimer linearTimer;
+    private LinearTimerView timerView;
+    //The textview that shows the time left
+    private TextView countdownText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +61,22 @@ public class RingActivity extends AppCompatActivity implements
         etUserInput = (EditText) findViewById(R.id.rinkInput);
         txWord = (TextView) findViewById(R.id.rinkWord);
         rvUserInputs = (RecyclerView) findViewById(R.id.rinkInputList);
+        countdownText = (TextView) findViewById(R.id.countdownText);
+        timerView = (LinearTimerView) findViewById(R.id.countdown);
 
         //Build the timer and start
         linearTimer = new LinearTimer.Builder()
+                //Pass the view
+                .linearTimerView(timerView)
                 //Set the duration for the timer | 60 seconds into Millis
                 .duration(60 * 1000)
                 //Set the callback listeners
                 .timerListener(RingActivity.this)
                 //Set the CountDown / CountUp type
                 .getCountUpdate(LinearTimer.COUNT_DOWN_TIMER, 1000)
+                //Set the timer progression direction
+                .progressDirection(LinearTimer.COUNTER_CLOCK_WISE_PROGRESSION)
                 .build();
-        linearTimer.startTimer();
     }
 
     @Override
@@ -95,6 +103,8 @@ public class RingActivity extends AppCompatActivity implements
         //Instantiate the spell checker
         TextServicesManager servicesManager = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
         spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
+
+        linearTimer.startTimer();
 
 //        //Get word list
 //        RFAutocomplete.SuggestionsAPIInterface apiInterface = RFAutocomplete.getSuggestionsAPIInterface();
@@ -172,7 +182,7 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        //Empty Stub
     }
 
     @Override
@@ -188,7 +198,7 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void afterTextChanged(Editable s) {
-
+        //Empty Stub
     }
 
     /**
@@ -220,6 +230,6 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void timerTick(long l) {
-
+        countdownText.setText(String.valueOf(l / 1000));
     }
 }

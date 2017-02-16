@@ -57,4 +57,20 @@
         app:initialColor="@color/colorPrimary"
         app:progressColor="@color/colorAccent"/>
 
+    <TextView
+        android:id="@+id/countdownText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@id/countdown"
+        android:layout_alignBottom="@id/countdown"
+        android:layout_alignEnd="@id/countdown"
+        android:layout_alignStart="@id/countdown"
+        android:paddingBottom="3dp"
+        android:paddingStart="3dp"
+        android:gravity="center"
+        tools:ignore="RtlSymmetry" />
+
 </RelativeLayout>
