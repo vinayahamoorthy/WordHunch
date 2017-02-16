@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<RelativeLayout-->
+<!---->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+
+<TextView
+    android:id="@+id/emptylist_title"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="@string/WordList_Empty"
+    android:layout_centerInParent="true"
+    android:textAppearance="@style/TextAppearance.Normal.Black"
+    android:gravity="center">
+</TextView>

@@ -42,7 +42,11 @@ public class RetroFit {
         //Instantiate RetroFit Library
         retrofit = new Retrofit.Builder()
                 //Set up Base URL
-                .baseUrl(WordHunch.getContext().getString(R.string.RetroFit_API_URI))
+                .baseUrl(
+                        WordHunch.getContext().getString(R.string.RetroFit_API_URI)
+                                + WordHunch.getContext().getString(R.string.RetroFit_API_Version)
+                                + WordHunch.getContext().getString(R.string.RetroFit_API_Dict)
+                )
                 //Set up OKHttP client as HTTP layer
                 .client(httpClient.build())
                 //Use GSON factory to parse server response

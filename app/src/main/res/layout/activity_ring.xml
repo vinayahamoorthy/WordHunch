@@ -36,13 +36,25 @@
         android:paddingTop="15dp"
         android:paddingEnd="15dp"
         android:textAllCaps="true"
-        android:inputType="text"
+        android:inputType="textFilter"
         android:lines="1"
         android:text=""
+        android:layout_toStartOf="@+id/countdown"
         android:layout_toEndOf="@id/rinkWord"
+        android:background="@android:color/transparent"
         android:textAppearance="@style/TextAppearance.AppCompat">
-
         <requestFocus />
     </EditText>
+
+    <io.github.krtkush.lineartimer.LinearTimerView
+        android:id="@+id/countdown"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:radius="8dp"
+        app:strokeWidth="1dp"
+        app:initialColor="@color/colorPrimary"
+        app:progressColor="@color/colorAccent"/>
 
 </RelativeLayout>

@@ -8,11 +8,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.WordHunch;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final static int VIEWTYPE_EMPTY = 0;
+    private final static int VIEWTYPE_WORDS = 1;
 
     /**
      * The list that holds the words to be displayed to the user on the screen
@@ -32,26 +36,62 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
      * @param strItem
      */
     void addItem(@NonNull String strItem) {
-        if(lsItems != null)
-            lsItems.add(strItem);
-        else {
+        //Check if the list is not null | If it is, instantiate, create a new list & add
+        if(lsItems != null) {
+            //Add the new item to the list only if it does not exist on the list.
+            //If it does, just ignore || This is a secondary check as a contingency
+            //The first level of check ensures any redundant entries are handled properly
+            //with UI feedback
+            if (!lsItems.contains(strItem))
+                lsItems.add(strItem);
+        } else {
+            //Instantiate and add
             lsItems = new ArrayList<>();
             lsItems.add(strItem);
         }
 
-        SuggestionsAdapter.this.notifyItemInserted(lsItems.size() - 1);
+        //Notify adapter a new item was added and the list needs to refresh
+//        SuggestionsAdapter.this.notifyItemInserted(lsItems.size() - 1);
+        SuggestionsAdapter.this.notifyDataSetChanged();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_suggestion_listitem, parent, false);
-        return new ViewHolder(view);
+        switch (viewType) {
+            case VIEWTYPE_EMPTY:
+                View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_suggestion_emptylist, parent, false);
+                return new EmptyViewHolder(emptyView);
+
+            case VIEWTYPE_WORDS:
+                View wordView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_suggestion_listitem, parent, false);
+                return new WordViewHolder(wordView);
+
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(lsItems != null)
+            if(!lsItems.isEmpty())
+                return VIEWTYPE_WORDS;
+            else
+                return VIEWTYPE_EMPTY;
+        else
+            return VIEWTYPE_EMPTY;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.txTitle.setText(lsItems.get(position));
+        if(holder != null)
+            if(holder instanceof WordViewHolder) {
+                WordViewHolder viewHolder = (WordViewHolder) holder;
+                viewHolder.txTitle.setText(lsItems.get(position));
+            } else if(holder instanceof EmptyViewHolder) {
+                EmptyViewHolder viewHolder = (EmptyViewHolder) holder;
+                viewHolder.txTitle.setText(WordHunch.getContext().getString(R.string.WordList_Empty));
+            }
     }
 
     @Override
@@ -60,18 +100,28 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(!lsItems.isEmpty())
                 return lsItems.size();
             else
-                return 0;
+                return 1;
         else
-            return 0;
+            return 1;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    private class WordViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txTitle;
 
-        public ViewHolder(View itemView) {
+        WordViewHolder(View itemView) {
             super(itemView);
             txTitle = (TextView) itemView.findViewById(R.id.suggestionInput);
+        }
+    }
+
+    private class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView txTitle;
+
+        EmptyViewHolder(View itemView) {
+            super(itemView);
+            txTitle = (TextView) itemView.findViewById(R.id.emptylist_title);
         }
     }
 }
