@@ -31,12 +31,17 @@ public class RFAutocomplete extends RetroFit {
     }
 
     public interface SuggestionsAPIInterface {
-        @GET("{dictCode}/search/didyoumean")
-        Call<DMSuggestions> getSuggestions(
-                @Path("dictCode") String strDictCode,
-                @Query("q") String strQuery,
-                @Query("entrynumber") int intEntryNumber,
-                @Query("page") int intPageNumber
+//        @GET("{dictCode}/search/didyoumean")
+//        Call<DMSuggestions> getSuggestions(
+//                @Path("dictCode") String strDictCode,
+//                @Query("q") String strQuery,
+//                @Query("entrynumber") int intEntryNumber,
+//                @Query("page") int intPageNumber
+//        );
+
+        @GET("wordoftheday/preview/")
+        Call<DMSuggestions> getWordOfTheDay(
+                @Query("day") String strDate
         );
     }
 }

@@ -46,7 +46,6 @@ public class RetroFit {
                 .baseUrl(
                         WordHunch.getContext().getString(R.string.RetroFit_API_URI)
                                 + WordHunch.getContext().getString(R.string.RetroFit_API_Version)
-                                + WordHunch.getContext().getString(R.string.RetroFit_API_Dict)
                 )
                 //Set up OKHttP client as HTTP layer
                 .client(httpClient.build())
@@ -76,12 +75,18 @@ public class RetroFit {
         public Response intercept(Chain chain) throws IOException {
             Request originalRequest = chain.request();
 
+            HttpUrl newRequest = originalRequest.url().newBuilder()
+                    .addQueryParameter("dictCode", "english")
+                    .build();
+
             //Add access key to the headers
             Headers headers = originalRequest.headers().newBuilder()
                     .add("accessKey", WordHunch.getContext().getString(R.string.API_Key_Collins))
                     .build();
 
-            return chain.proceed(originalRequest.newBuilder().headers(headers).build());
+            return chain.proceed(originalRequest.newBuilder()
+                    .url(newRequest)
+                    .headers(headers).build());
         }
     }
 }

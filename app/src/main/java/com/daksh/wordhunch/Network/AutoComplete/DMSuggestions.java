@@ -9,38 +9,26 @@ import java.util.List;
 public class DMSuggestions {
 
     @Expose
-    @SerializedName("searchTerm")
-    private String searchTerm;
+    @SerializedName("textEntryPreview")
+    private String definition;
 
     @Expose
-    @SerializedName("dictionaryCode")
-    private String dictionaryCode;
+    @SerializedName("entryLabel")
+    private String entry;
 
-    @Expose
-    @SerializedName("suggestions")
-    private List<String> suggestions = new ArrayList<>();
-
-    public String getSearchTerm() {
-        return searchTerm;
+    public String getDefinition() {
+        return definition;
     }
 
-    public void setSearchTerm(String searchTerm) {
-        this.searchTerm = searchTerm;
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
-    public String getDictionaryCode() {
-        return dictionaryCode;
+    public String getEntry() {
+        return entry;
     }
 
-    public void setDictionaryCode(String dictionaryCode) {
-        this.dictionaryCode = dictionaryCode;
-    }
-
-    public List<String> getSuggestions() {
-        return suggestions;
-    }
-
-    public void setSuggestions(List<String> suggestions) {
-        this.suggestions = suggestions;
+    public void setEntry(String entry) {
+        this.entry = entry;
     }
 }
