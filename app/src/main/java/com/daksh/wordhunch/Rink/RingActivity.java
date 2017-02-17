@@ -55,6 +55,9 @@ public class RingActivity extends AppCompatActivity implements
     private LinearTimer linearTimer;
     //The textview that shows the time left
     private TextView countdownText;
+    //A boolean to track if the counter is currently active or not | It is used to ensure
+    //The game doesn't reset when the app comes to foreground from background - challenges are set on onResume
+    private Boolean isCounterActive = false;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -121,34 +124,41 @@ public class RingActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        //Set Challenge
-        setChallenge();
+        if(!isCounterActive) {
 
-        //Force open the keyboard
-        if(etUserInput != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInputFromInputMethod(etUserInput.getWindowToken(), InputMethodManager.SHOW_FORCED);
+            //Set Challenge
+            setChallenge();
 
-            //Set up word listener on the user input field
-            etUserInput.setOnEditorActionListener(RingActivity.this);
-            etUserInput.addTextChangedListener(RingActivity.this);
+            //Force open the keyboard
+            if (etUserInput != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.showSoftInputFromInputMethod(etUserInput.getWindowToken(), InputMethodManager.SHOW_FORCED);
 
-            etUserInput.setFilters(new InputFilter[] { new InputFilter.AllCaps()});
+                //Set up word listener on the user input field
+                etUserInput.setOnEditorActionListener(RingActivity.this);
+                etUserInput.addTextChangedListener(RingActivity.this);
+
+                etUserInput.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+            }
+
+            //Assign adapter to the recyclerView
+            adapter = new SuggestionsAdapter();
+            if (rvUserInputs != null)
+                rvUserInputs.setAdapter(adapter);
+
+            //Instantiate the spell checker
+            TextServicesManager servicesManager = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
+            spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
+
+            //Start the timer
+            linearTimer.startTimer();
         }
-
-        //Assign adapter to the recyclerView
-        adapter = new SuggestionsAdapter();
-        if(rvUserInputs != null)
-            rvUserInputs.setAdapter(adapter);
-
-        //Instantiate the spell checker
-        TextServicesManager servicesManager = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
-        spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
-
-        //Start the timer
-        linearTimer.startTimer();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -257,10 +267,13 @@ public class RingActivity extends AppCompatActivity implements
         txWord.setEnabled(false);
 
         rlViel.setVisibility(View.VISIBLE);
+
+        isCounterActive = false;
     }
 
     @Override
     public void timerTick(long l) {
+        isCounterActive = true;
         countdownText.setText(String.valueOf(l / 1000));
     }
 

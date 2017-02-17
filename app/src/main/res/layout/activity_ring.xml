@@ -50,8 +50,8 @@
         android:id="@+id/countdown"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:radius="8dp"
         app:strokeWidth="1dp"
         app:initialColor="@color/colorPrimary"
@@ -70,6 +70,8 @@
         android:layout_alignStart="@id/countdown"
         android:paddingBottom="3dp"
         android:paddingStart="3dp"
+        android:textSize="15sp"
+        android:textStyle="bold"
         android:gravity="center"
         tools:ignore="RtlSymmetry" />
 
