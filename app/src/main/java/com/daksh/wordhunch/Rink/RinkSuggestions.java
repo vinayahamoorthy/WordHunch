@@ -4,10 +4,12 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.daksh.wordhunch.Network.AutoComplete.DMSuggestions;
+import com.daksh.wordhunch.Network.AutoComplete.DMSuggestionsDao;
 import com.daksh.wordhunch.Network.AutoComplete.OnSuggestionCompleteListener;
 import com.daksh.wordhunch.Network.AutoComplete.RFAutocomplete;
 import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
+import com.daksh.wordhunch.WordHunch;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,6 +26,7 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
         //Empty constructor with private modifier to objects may not be made without passing instance of
         //calling activity
     }
+
     /**
      * Constructor to accept the calling activity's context
      * @param activity
@@ -55,11 +58,26 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
                 String strChallenge = Util.getRandomAlphabets(strDefinition);
                 OnSuggestionCompleteListener onSuggestionCompleteListener = ringActivity;
                 onSuggestionCompleteListener.onChallengeReceived(strChallenge);
+
+                //Store to Database
+                DMSuggestionsDao suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
+                suggestionsDao.insertOrReplace(dmSuggestions);
             }
     }
 
     @Override
     public void onFailure(Call<DMSuggestions> call, Throwable t) {
+        //If API failed, fetch item from local DB
+        DMSuggestionsDao suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
+        Long lngTableCount = suggestionsDao.count();
+        int intRandomEntry = Util.getRandomNumber(Integer.valueOf(String.valueOf(lngTableCount)));
+        DMSuggestions dmSuggestions = suggestionsDao.loadByRowId(intRandomEntry);
 
+        if(dmSuggestions != null) {
+            String strDefinition = dmSuggestions.getDefinition();
+            String strChallenge = Util.getRandomAlphabets(strDefinition);
+            OnSuggestionCompleteListener onSuggestionCompleteListener = ringActivity;
+            onSuggestionCompleteListener.onChallengeReceived(strChallenge);
+        }
     }
 }

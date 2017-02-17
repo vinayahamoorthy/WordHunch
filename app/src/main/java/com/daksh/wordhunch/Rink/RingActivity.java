@@ -149,9 +149,6 @@ public class RingActivity extends AppCompatActivity implements
             //Instantiate the spell checker
             TextServicesManager servicesManager = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
             spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
-
-            //Start the timer
-            linearTimer.startTimer();
         }
     }
 
@@ -196,22 +193,25 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
-        for(SentenceSuggestionsInfo result : results) {
-            int n = result.getSuggestionsCount();
-            for(int i = 0 ; i < n ; i++){
-                int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
-                for(int k = 0 ; k < m ; k++) {
-                    String strSuggestion = trimString(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
+        if(results != null)
+            for(SentenceSuggestionsInfo result : results) {
+                if(result != null) {
+                    int n = result.getSuggestionsCount();
+                    for (int i = 0; i < n; i++) {
+                        int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
+                        for (int k = 0; k < m; k++) {
+                            String strSuggestion = trimString(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
 
-                    // the word goes on the list only if it starts with the two letters given
-                    //or if there are no spaces
-                    if(strSuggestion.startsWith(trimString(String.valueOf(txWord.getText())))
-                            || !strSuggestion.contains(" ")
-                            || !lsSuggestions.contains(strSuggestion))
-                        lsSuggestions.add(strSuggestion);
+                            // the word goes on the list only if it starts with the two letters given
+                            //or if there are no spaces
+                            if (strSuggestion.startsWith(trimString(String.valueOf(txWord.getText())))
+                                    || !strSuggestion.contains(" ")
+                                    || !lsSuggestions.contains(strSuggestion))
+                                lsSuggestions.add(strSuggestion);
+                        }
+                    }
                 }
             }
-        }
     }
 
     @Override
@@ -254,7 +254,7 @@ public class RingActivity extends AppCompatActivity implements
                 stringBuffer.append(character);
 
         //Return the new string retrieved
-        return stringBuffer.toString().toLowerCase();
+        return stringBuffer.toString().toUpperCase();
     }
 
     @Override
@@ -288,5 +288,7 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     public void onChallengeReceived(String strChallenge) {
         txWord.setText(strChallenge);
+        //Start the timer
+        linearTimer.startTimer();
     }
 }
