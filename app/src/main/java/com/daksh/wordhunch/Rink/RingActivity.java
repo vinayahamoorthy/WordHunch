@@ -1,7 +1,10 @@
 package com.daksh.wordhunch.Rink;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -24,10 +27,13 @@ import android.widget.Toast;
 
 import com.daksh.wordhunch.Network.AutoComplete.OnSuggestionCompleteListener;
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.Util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.github.krtkush.lineartimer.LinearTimer;
 import io.github.krtkush.lineartimer.LinearTimerView;
@@ -35,7 +41,7 @@ import io.github.krtkush.lineartimer.LinearTimerView;
 public class RingActivity extends AppCompatActivity implements
         TextView.OnEditorActionListener,
         SpellCheckerSession.SpellCheckerSessionListener, TextWatcher,
-        LinearTimer.TimerListener, OnSuggestionCompleteListener {
+        LinearTimer.TimerListener, OnSuggestionCompleteListener, OnScoreUpdateListener {
 
     //The field where the user inputs the words
     private EditText etUserInput;
@@ -55,9 +61,19 @@ public class RingActivity extends AppCompatActivity implements
     private LinearTimer linearTimer;
     //The textview that shows the time left
     private TextView countdownText;
+    //The TextView that holds the score
+    private TextView txRinkScore;
     //A boolean to track if the counter is currently active or not | It is used to ensure
     //The game doesn't reset when the app comes to foreground from background - challenges are set on onResume
     private Boolean isCounterActive = false;
+
+    private static Handler scoreUpdater = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -97,6 +113,7 @@ public class RingActivity extends AppCompatActivity implements
         txWord = (TextView) findViewById(R.id.rinkWord);
         rvUserInputs = (RecyclerView) findViewById(R.id.rinkInputList);
         countdownText = (TextView) findViewById(R.id.countdownText);
+        txRinkScore = (TextView) findViewById(R.id.rinkScore);
         //A circular progress bar to keep track of time
         LinearTimerView timerView = (LinearTimerView) findViewById(R.id.countdown);
         rlViel = (RelativeLayout) findViewById(R.id.cover);
@@ -160,10 +177,17 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
-            String strWord = trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
+            String strWord = Util.trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
             if(lsSuggestions != null) {
                 for(String strSuggestion : lsSuggestions)
                     if(strWord.equalsIgnoreCase(strSuggestion.trim())) {
+
+                        //Compute score on a different thread and add to score
+                        RinkScore rinkScore = new RinkScore();
+                        rinkScore.setWord(strWord);
+                        rinkScore.setScoreListener(RingActivity.this);
+                        rinkScore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
                         //Add items to the adapter
                         adapter.addItem(strWord);
 
@@ -200,11 +224,11 @@ public class RingActivity extends AppCompatActivity implements
                     for (int i = 0; i < n; i++) {
                         int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
                         for (int k = 0; k < m; k++) {
-                            String strSuggestion = trimString(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
+                            String strSuggestion = Util.trimString(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
 
                             // the word goes on the list only if it starts with the two letters given
                             //or if there are no spaces
-                            if (strSuggestion.startsWith(trimString(String.valueOf(txWord.getText())))
+                            if (strSuggestion.startsWith(Util.trimString(String.valueOf(txWord.getText())))
                                     || !strSuggestion.contains(" ")
                                     || !lsSuggestions.contains(strSuggestion))
                                 lsSuggestions.add(strSuggestion);
@@ -233,28 +257,6 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     public void afterTextChanged(Editable s) {
         //Empty Stub
-    }
-
-    /**
-     * Trims the passed string and ensures the characters that make up the String are only
-     * alphabetic. Specifically used to ensure no special characters or spaces are concatenated with
-     * the string
-     * @param aString The string to be trimmed down
-     * @return A trimmed string which is only as long as the number of characters visible
-     */
-    private String trimString(String aString) {
-        //Convert string to char array
-        char[] characters = aString.toCharArray();
-        //Create a string buffer to start appending chars | Size passed as 1 will grow as requireds
-        StringBuilder stringBuffer = new StringBuilder(1);
-        //Iterate the characters to check if all of them are alphabetic. Alphabetic characters are
-        //appended to the string buffer and others are discarded
-        for(char character : characters)
-            if(Character.isAlphabetic(character))
-                stringBuffer.append(character);
-
-        //Return the new string retrieved
-        return stringBuffer.toString().toUpperCase();
     }
 
     @Override
@@ -291,4 +293,29 @@ public class RingActivity extends AppCompatActivity implements
         //Start the timer
         linearTimer.startTimer();
     }
+
+    @Override
+    public void onScoreUpdated(Integer intWordScore) {
+        intCurrentScore = Integer.parseInt(String.valueOf(txRinkScore.getText()));
+        this.intNewScore = intWordScore + intCurrentScore;
+//        for(int intCounter = intCurrentScore ; intCounter <= intCurrentScore + intWordScore ; intCounter++)
+//            txRinkScore.setText(String.valueOf(intCounter));
+
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(timerTask, 0, 300);
+    }
+    int intCurrentScore;
+    int intNewScore;
+    private TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(intCurrentScore < intNewScore)
+                        txRinkScore.setText(String.valueOf(intCurrentScore++));
+                }
+            });
+        }
+    };
 }

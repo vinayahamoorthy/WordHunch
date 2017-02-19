@@ -14,6 +14,16 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
     <TextView
+        android:id="@+id/rinkScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:padding="18sp"/>
+
+    <TextView
         android:id="@+id/rinkWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,9 +60,9 @@
         android:id="@+id/countdown"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:radius="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:radius="7dp"
         app:strokeWidth="1dp"
         app:initialColor="@color/colorPrimary"
         app:progressColor="@color/colorAccent"/>

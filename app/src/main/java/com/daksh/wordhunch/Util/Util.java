@@ -86,4 +86,26 @@ public class Util {
                 return false;
         }
     }
+
+    /**
+     * Trims the passed string and ensures the characters that make up the String are only
+     * alphabetic. Specifically used to ensure no special characters or spaces are concatenated with
+     * the string
+     * @param aString The string to be trimmed down
+     * @return A trimmed string which is only as long as the number of characters visible
+     */
+    public static String trimString(String aString) {
+        //Convert string to char array
+        char[] characters = aString.toCharArray();
+        //Create a string buffer to start appending chars | Size passed as 1 will grow as requireds
+        StringBuilder stringBuffer = new StringBuilder(1);
+        //Iterate the characters to check if all of them are alphabetic. Alphabetic characters are
+        //appended to the string buffer and others are discarded
+        for(char character : characters)
+            if(Character.isAlphabetic(character))
+                stringBuffer.append(character);
+
+        //Return the new string retrieved
+        return stringBuffer.toString().toUpperCase();
+    }
 }
