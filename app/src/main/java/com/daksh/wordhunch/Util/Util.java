@@ -49,7 +49,10 @@ public class Util {
             String[] words = strSentence.split(" ");
             int intRandomWordLocation = getRandomNumber(words.length);
             String strRandomWord = words[intRandomWordLocation];
-            return String.valueOf(strRandomWord.charAt(0)) + String.valueOf(strRandomWord.charAt(1));
+            if(strRandomWord.length() > 2)
+                return String.valueOf(strRandomWord.charAt(0)) + String.valueOf(strRandomWord.charAt(1));
+            else
+                return getRandomAlphabets(strSentence);
         } else
             return strSentence;
     }

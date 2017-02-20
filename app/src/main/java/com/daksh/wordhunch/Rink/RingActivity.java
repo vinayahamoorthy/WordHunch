@@ -66,14 +66,10 @@ public class RingActivity extends AppCompatActivity implements
     //A boolean to track if the counter is currently active or not | It is used to ensure
     //The game doesn't reset when the app comes to foreground from background - challenges are set on onResume
     private Boolean isCounterActive = false;
-
-    private static Handler scoreUpdater = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
+    //The current score of the user at any given point
+    private int intCurrentScore;
+    //The new score won by a new word
+    private int intNewScore;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -296,26 +292,31 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void onScoreUpdated(Integer intWordScore) {
+        //Save the current score
         intCurrentScore = Integer.parseInt(String.valueOf(txRinkScore.getText()));
+        //Calculate the new total score
         this.intNewScore = intWordScore + intCurrentScore;
-//        for(int intCounter = intCurrentScore ; intCounter <= intCurrentScore + intWordScore ; intCounter++)
-//            txRinkScore.setText(String.valueOf(intCounter));
 
+        //Initiate a timer to score up the current score on the top right
         Timer t = new Timer();
-        t.scheduleAtFixedRate(timerTask, 0, 300);
+        t.scheduleAtFixedRate(new TimerTask() {
+                                  @Override
+                                  public void run() {
+                                      //Views may only be updated on UI threads, run runnable on UI thread
+                                      runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              //If the curren score is less than the new score, only then add one and update
+                                              if(intCurrentScore < intNewScore)
+                                                  txRinkScore.setText(String.valueOf(++intCurrentScore));
+                                              else
+                                                  //Once timer has run its course, cancel and exit
+                                                  cancel();
+                                          }
+                                      });
+                                  }
+                              },
+                0, //Execute timerTask immediately without delay
+                20); //Recursively execute timerTask at an interim period of 20 millis
     }
-    int intCurrentScore;
-    int intNewScore;
-    private TimerTask timerTask = new TimerTask() {
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if(intCurrentScore < intNewScore)
-                        txRinkScore.setText(String.valueOf(intCurrentScore++));
-                }
-            });
-        }
-    };
 }
