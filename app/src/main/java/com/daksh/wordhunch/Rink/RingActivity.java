@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.daksh.wordhunch.Network.AutoComplete.OnSuggestionCompleteListener;
 import com.daksh.wordhunch.R;
@@ -47,7 +46,7 @@ public class RingActivity extends AppCompatActivity implements
     //The field where the user inputs the words
     private EditText etUserInput;
     //Field which holds the first two alphabets for the user to build the word on
-    TextView txWord;
+    private TextView txWord;
     //A cover view that displays a replay button when the timer expires
     private RelativeLayout rlViel;
     //The RecyclerView which holds the words inserted by the user

@@ -33,7 +33,7 @@ public class SMScoreIncrease {
      * @param soundPool A soundPool object used to load raw music files and extract a SoundID to be
      *                  used later to perform functions on the sound
      */
-    public SMScoreIncrease(SoundPool soundPool) {
+    SMScoreIncrease(SoundPool soundPool) {
         this.soundPool = soundPool;
         soundID = soundPool.load(WordHunch.getContext(), R.raw.se_time_over, 1);
     }

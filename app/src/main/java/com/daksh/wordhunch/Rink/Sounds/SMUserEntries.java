@@ -5,6 +5,11 @@ import android.media.SoundPool;
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.WordHunch;
 
+/**
+ * Credits to sounds :
+ * 1) User decline : ertfelda (https://www.freesound.org/people/ertfelda/sounds/243700/)
+ * 2)
+ */
 public class SMUserEntries {
 
     /**
@@ -33,7 +38,7 @@ public class SMUserEntries {
      * @param soundPool A soundPool object used to load raw music files and extract a SoundID to be
      *                  used later to perform functions on the sound
      */
-    public SMUserEntries(SoundPool soundPool) {
+    SMUserEntries(SoundPool soundPool) {
         this.soundPool = soundPool;
         rejectSoundID = soundPool.load(WordHunch.getContext(), R.raw.sound_incorrect_entry, 1);
     }
