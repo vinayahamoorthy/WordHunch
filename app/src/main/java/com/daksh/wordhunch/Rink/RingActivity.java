@@ -1,14 +1,14 @@
 package com.daksh.wordhunch.Rink;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.daksh.wordhunch.Network.AutoComplete.OnSuggestionCompleteListener;
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.Rink.Sounds.SoundManager;
 import com.daksh.wordhunch.Util.Util;
 
 import java.util.ArrayList;
@@ -70,6 +71,9 @@ public class RingActivity extends AppCompatActivity implements
     private int intCurrentScore;
     //The new score won by a new word
     private int intNewScore;
+    //An object of ScoreIncrease | child of the sound manager that is used to play a sound
+    //when the score increases
+    private SoundManager soundManager;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -101,9 +105,19 @@ public class RingActivity extends AppCompatActivity implements
     };
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        //Release all sound resources with SoundPool
+        if(soundManager != null)
+            soundManager.release();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ring);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //Bind views
         etUserInput = (EditText) findViewById(R.id.rinkInput);
         txWord = (TextView) findViewById(R.id.rinkWord);
@@ -136,6 +150,13 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(soundManager == null || soundManager.getSoundPool() == null)
+            //initialize the sound manager via child classes that will be used to play sound files overtime
+            soundManager = new SoundManager.Builder()
+                    .setupScoreSounds()
+                    .setupIncorrectEntry()
+                    .build();
 
         if(!isCounterActive) {
 
@@ -174,7 +195,7 @@ public class RingActivity extends AppCompatActivity implements
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
             String strWord = Util.trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
-            if(lsSuggestions != null) {
+            if(!TextUtils.isEmpty(etUserInput.getText()) && lsSuggestions != null) {
                 for(String strSuggestion : lsSuggestions)
                     if(strWord.equalsIgnoreCase(strSuggestion.trim())) {
 
@@ -196,10 +217,11 @@ public class RingActivity extends AppCompatActivity implements
                         return true;
                     }
 
-                //Display error to user
-                Toast.makeText(RingActivity.this, "Not a word", Toast.LENGTH_SHORT).show();
+                //Display error to user and play sound
+                soundManager.getUserInputs().playRejectSound();
             } else
-                Toast.makeText(RingActivity.this, "Not a word", Toast.LENGTH_SHORT).show();
+                //Display error to user and play sound
+                soundManager.getUserInputs().playRejectSound();
 
             return true;
         } else
@@ -296,7 +318,8 @@ public class RingActivity extends AppCompatActivity implements
         intCurrentScore = Integer.parseInt(String.valueOf(txRinkScore.getText()));
         //Calculate the new total score
         this.intNewScore = intWordScore + intCurrentScore;
-
+        //Play voice to imitate climbing score
+        soundManager.getScoreSounds().playSound();
         //Initiate a timer to score up the current score on the top right
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
@@ -306,12 +329,15 @@ public class RingActivity extends AppCompatActivity implements
                                       runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              //If the curren score is less than the new score, only then add one and update
+                                              //If the current score is less than the new score, only then add one and update
                                               if(intCurrentScore < intNewScore)
                                                   txRinkScore.setText(String.valueOf(++intCurrentScore));
-                                              else
+                                              else {
+                                                  //A method to stop the streaming if the score stops increasing
+                                                  soundManager.getScoreSounds().stopStream();
                                                   //Once timer has run its course, cancel and exit
                                                   cancel();
+                                              }
                                           }
                                       });
                                   }
