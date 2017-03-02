@@ -1,5 +1,6 @@
 package com.daksh.wordhunch.Rink;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -10,6 +11,7 @@ import com.daksh.wordhunch.Network.AutoComplete.RFAutocomplete;
 import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
 import com.daksh.wordhunch.WordHunch;
+import com.firebase.jobdispatcher.JobService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,9 +20,9 @@ import retrofit2.Response;
 public class RinkSuggestions implements Callback<DMSuggestions> {
 
     /**
-     * Context of the calling activity
+     * The callback interface to be executed when response is received from the server
      */
-    private RingActivity ringActivity;
+    private OnSuggestionCompleteListener suggestionCompleteListener;
 
     private RinkSuggestions() {
         //Empty constructor with private modifier to objects may not be made without passing instance of
@@ -28,19 +30,23 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
     }
 
     /**
-     * Constructor to accept the calling activity's context
-     * @param activity
+     * Constructor to accept a callback interface which is executed when the data is received
+     * from the server
+     * @param suggestionCompleteListener The interface object whose methods are executed
+     *                                   to return the suggestion when returned from the service
      */
-    RinkSuggestions(@NonNull RingActivity activity) {
-        ringActivity = activity;
+    public RinkSuggestions(@NonNull OnSuggestionCompleteListener suggestionCompleteListener) {
+        this.suggestionCompleteListener = suggestionCompleteListener;
     }
 
     /**
      * A method that fetches word of the day from collins
      */
-    void getSuggestions() {
+    public void getSuggestions() {
         //Get word list
-        DialogClass.showBirdDialog(ringActivity);
+        if(suggestionCompleteListener.getContext() != null)
+            DialogClass.showBirdDialog((Activity) suggestionCompleteListener.getContext());
+
         RFAutocomplete.SuggestionsAPIInterface apiInterface = RFAutocomplete.getSuggestionsAPIInterface();
         Call<DMSuggestions> listCall = apiInterface.getWordOfTheDay(
                 Util.getTodaysDate(Util.YYYYMMDD)
@@ -50,14 +56,16 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
 
     @Override
     public void onResponse(Call<DMSuggestions> call, Response<DMSuggestions> response) {
-        DialogClass.dismissBirdDialog(ringActivity);
+        if(suggestionCompleteListener.getContext() != null)
+            DialogClass.dismissBirdDialog((Activity) suggestionCompleteListener.getContext());
+
         if(response != null && response.isSuccessful())
             if(response.body() != null && !TextUtils.isEmpty(response.body().getDefinition())) {
                 DMSuggestions dmSuggestions = response.body();
                 String strDefinition = dmSuggestions.getDefinition();
                 String strChallenge = Util.getRandomAlphabets(strDefinition);
-                OnSuggestionCompleteListener onSuggestionCompleteListener = ringActivity;
-                onSuggestionCompleteListener.onChallengeReceived(strChallenge);
+
+                suggestionCompleteListener.onChallengeReceived(strChallenge);
 
                 //Store to Database
                 DMSuggestionsDao suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
@@ -67,17 +75,19 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
 
     @Override
     public void onFailure(Call<DMSuggestions> call, Throwable t) {
-        //If API failed, fetch item from local DB
-        DMSuggestionsDao suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
-        Long lngTableCount = suggestionsDao.count();
-        int intRandomEntry = Util.getRandomNumber(Integer.valueOf(String.valueOf(lngTableCount)));
-        DMSuggestions dmSuggestions = suggestionsDao.loadByRowId(intRandomEntry);
 
-        if(dmSuggestions != null) {
-            String strDefinition = dmSuggestions.getDefinition();
-            String strChallenge = Util.getRandomAlphabets(strDefinition);
-            OnSuggestionCompleteListener onSuggestionCompleteListener = ringActivity;
-            onSuggestionCompleteListener.onChallengeReceived(strChallenge);
+        //If API failed, fetch item from local DB | Only if the activity requested it
+        if(suggestionCompleteListener.getContext() != null) {
+            DMSuggestionsDao suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
+            Long lngTableCount = suggestionsDao.count();
+            int intRandomEntry = Util.getRandomNumber(Integer.valueOf(String.valueOf(lngTableCount)));
+            DMSuggestions dmSuggestions = suggestionsDao.loadByRowId(intRandomEntry);
+
+            if (dmSuggestions != null) {
+                String strDefinition = dmSuggestions.getDefinition();
+                String strChallenge = Util.getRandomAlphabets(strDefinition);
+                suggestionCompleteListener.onChallengeReceived(strChallenge);
+            }
         }
     }
 }

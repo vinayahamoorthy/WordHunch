@@ -312,6 +312,11 @@ public class RingActivity extends AppCompatActivity implements
     }
 
     @Override
+    public Context getContext() {
+        return RingActivity.this;
+    }
+
+    @Override
     public void onScoreUpdated(Integer intWordScore) {
         //Save the current score
         intCurrentScore = Integer.parseInt(String.valueOf(txRinkScore.getText()));
