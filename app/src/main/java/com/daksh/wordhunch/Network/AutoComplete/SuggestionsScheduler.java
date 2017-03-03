@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.v7.app.NotificationCompat;
 
 import com.daksh.wordhunch.Rink.RinkSuggestions;
-import com.daksh.wordhunch.WordHunch;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 

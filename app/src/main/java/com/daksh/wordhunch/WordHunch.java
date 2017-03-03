@@ -9,6 +9,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.daksh.wordhunch.Network.AutoComplete.DaoMaster;
 import com.daksh.wordhunch.Network.AutoComplete.DaoSession;
+import com.daksh.wordhunch.Network.AutoComplete.PurgeScheduler;
 import com.daksh.wordhunch.Network.AutoComplete.SuggestionsScheduler;
 import com.daksh.wordhunch.Network.RetroFit;
 import com.firebase.jobdispatcher.Constraint;
@@ -51,6 +52,55 @@ public class WordHunch extends Application {
         //and internet is present
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
 
+        //Create individual job scheduler to cater to certain tasks
+        createSuggestionJobScheduler(dispatcher);
+        createPurgeJobScheduler(dispatcher);
+    }
+
+    /**
+     * Creates a purge job scheduler to be executed in the background which accesses the local database
+     * for suggestions table. Refer {@link PurgeScheduler} for documentation.
+     * @param dispatcher The FireJobDispatcher which creates the job & schedules it
+     */
+    private void createPurgeJobScheduler(FirebaseJobDispatcher dispatcher) {
+        //Build a new job dispatcher to specify when suggestions should be purged in the background
+        //to save space and/or purge parts of the suggestions which are not usable in WordHunch app
+        Job purgeJob = dispatcher.newJobBuilder()
+                //Set a tag for the job
+                .setTag(PurgeScheduler.class.getSimpleName())
+                //Lifetime of forever | Persistence across device reboots
+                .setLifetime(Lifetime.FOREVER)
+                //Set the service to be executed
+                .setService(PurgeScheduler.class)
+                //Execute over and over again based on trigger
+                .setRecurring(true)
+                //Constraint | Device is charging and connected to internet
+                .setConstraints(
+                        Constraint.DEVICE_CHARGING
+                )
+                //Set a trigger to execute this task every 24 hours with a latency tolerance of 1 hour
+                .setTrigger(Trigger.executionWindow(
+                        (int) TimeUnit.HOURS.toSeconds(1),
+                        (int) TimeUnit.HOURS.toSeconds(2)
+                ))
+                //Do not replace if a job exists with the same tag
+                .setReplaceCurrent(false)
+                //Build it
+                .build();
+
+        //Schedule job
+        dispatcher.schedule(purgeJob);
+    }
+
+    /**
+     * Creates a Suggestions job scheduler to be executed in the background which accesses collins'
+     * APIs to download word of the day and uses it's description to create suggestions.
+     * Also, all downloaded entities are stored in the local database to be used when internet connectivity
+     * is missing
+     * Refer {@link PurgeScheduler} for documentation.
+     * @param dispatcher The FireJobDispatcher which creates the job & schedules it
+     */
+    private void createSuggestionJobScheduler(FirebaseJobDispatcher dispatcher) {
         //Build a new job dispatcher to specify when suggestions should be downloaded
         //in the background
         Job backgroundJob = dispatcher.newJobBuilder()
@@ -69,8 +119,8 @@ public class WordHunch extends Application {
                 )
                 //Set a trigger to execute this task every 24 hours with a latency tolerance of 1 hour
                 .setTrigger(Trigger.executionWindow(
-                        (int) TimeUnit.HOURS.toSeconds(24),
-                        (int) TimeUnit.HOURS.toSeconds(24) + (int) TimeUnit.HOURS.toSeconds(1)
+                        (int) TimeUnit.HOURS.toSeconds(1),
+                        (int) TimeUnit.HOURS.toSeconds(2)
                 ))
                 //Do not replace if a job exists with the same tag
                 .setReplaceCurrent(false)
