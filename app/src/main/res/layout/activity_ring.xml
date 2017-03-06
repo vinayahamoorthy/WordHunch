@@ -19,17 +19,17 @@
         android:layout_height="wrap_content"
         android:text="0"
         android:textStyle="bold"
-        android:textSize="17sp"
-        android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/countdownText"
-        android:layout_alignTop="@+id/countdownText"
-        android:layout_alignBottom="@+id/countdownText"/>
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_toStartOf="@+id/countdown"
+        android:layout_alignTop="@+id/countdown"
+        android:layout_alignBottom="@+id/countdown"/>
 
     <io.github.krtkush.lineartimer.LinearTimerView
         android:id="@+id/countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:radius="9dp"
+        app:radius="6dp"
         app:strokeWidth="1dp"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"

@@ -36,6 +36,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.github.krtkush.lineartimer.LinearTimer;
+import io.github.krtkush.lineartimer.LinearTimerStates;
 import io.github.krtkush.lineartimer.LinearTimerView;
 
 public class RingActivity extends AppCompatActivity implements
@@ -81,7 +82,8 @@ public class RingActivity extends AppCompatActivity implements
         @Override
         public void onClick(View v) {
             //Set countdown timer to 0
-            linearTimer.restartTimer();
+            if(linearTimer.getState() == LinearTimerStates.FINISHED)
+                linearTimer.resetTimer();
             //Clear the RecyclerView
             adapter.clearItems();
             //Enable editing on the input field and the word challenge
@@ -296,6 +298,11 @@ public class RingActivity extends AppCompatActivity implements
         countdownText.setText(String.valueOf(l / 1000));
     }
 
+    @Override
+    public void onTimerReset() {
+
+    }
+
     /**
      * The method that sets up a word challenge and confirms validations with the server
      */
@@ -308,7 +315,8 @@ public class RingActivity extends AppCompatActivity implements
     public void onChallengeReceived(String strChallenge) {
         txWord.setText(strChallenge);
         //Start the timer
-        linearTimer.startTimer();
+        if(linearTimer.getState() == LinearTimerStates.INITIALIZED)
+            linearTimer.startTimer();
     }
 
     @Override
