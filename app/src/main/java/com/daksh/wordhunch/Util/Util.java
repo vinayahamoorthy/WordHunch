@@ -70,7 +70,7 @@ public class Util {
             Calendar calendar = Calendar.getInstance();
             return simpleDateFormat.format(calendar.getTime());
         } else
-            throw new RuntimeException();
+            throw new RuntimeException("Format string provided is not one of provided in Util class.");
     }
 
     /**

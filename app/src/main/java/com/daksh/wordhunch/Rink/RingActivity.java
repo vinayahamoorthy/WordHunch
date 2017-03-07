@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import io.github.krtkush.lineartimer.LinearTimer;
 import io.github.krtkush.lineartimer.LinearTimerStates;
@@ -140,8 +141,8 @@ public class RingActivity extends AppCompatActivity implements
         linearTimer = new LinearTimer.Builder()
                 //Pass the view
                 .linearTimerView(timerView)
-                //Set the duration for the timer | 60 seconds into Millis
-                .duration(90 * 1000)
+                //Set the duration for the timer | 90 seconds into Millis
+                .duration(TimeUnit.SECONDS.toMillis(90))
                 //Set the callback listeners
                 .timerListener(RingActivity.this)
                 //Set the CountDown / CountUp type
@@ -352,7 +353,7 @@ public class RingActivity extends AppCompatActivity implements
 
     @Override
     public void onTimerReset() {
-
+        //Empty Stub
     }
 
     /**

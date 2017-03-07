@@ -14,21 +14,25 @@ import org.greenrobot.greendao.annotation.Unique;
 )
 public class DMSuggestions {
 
-    @Expose
-    @SerializedName("textEntryPreview")
-    @Property
-    private String definition;
-
     @Id
     @Unique
     @Expose
     @SerializedName("entryLabel")
     private String entry;
 
-    @Generated(hash = 2061534706)
-    public DMSuggestions(String definition, String entry) {
-        this.definition = definition;
+    @Expose
+    @SerializedName("textEntryPreview")
+    @Property
+    private String definition;
+
+    @Property
+    private String date;
+
+    @Generated(hash = 1099616769)
+    public DMSuggestions(String entry, String definition, String date) {
         this.entry = entry;
+        this.definition = definition;
+        this.date = date;
     }
 
     @Generated(hash = 894785932)
@@ -49,5 +53,13 @@ public class DMSuggestions {
 
     public void setEntry(String entry) {
         this.entry = entry;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
