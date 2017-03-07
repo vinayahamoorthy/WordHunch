@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v7.app.NotificationCompat;
 
+import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.Rink.RinkSuggestions;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
@@ -37,6 +38,7 @@ public class SuggestionsScheduler extends JobService implements OnSuggestionComp
                 .setTicker("New challengeg")
                 .setContentTitle("Word Hunch")
                 .setContentText("A new challenge was received")
+                .setSmallIcon(R.drawable.ic_replay)
                 .build();
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

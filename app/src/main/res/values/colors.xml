@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <!-- Text color -->
+    <!-- Text colors -->
     <color name="blackTextColorOne">#54000000</color>
+    <color name="redTextColorOne">#EF5350</color>
+
 </resources>

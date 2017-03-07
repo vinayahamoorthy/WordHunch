@@ -3,6 +3,7 @@ package com.daksh.wordhunch.Rink;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.textservice.SentenceSuggestionsInfo;
@@ -192,6 +195,43 @@ public class RingActivity extends AppCompatActivity implements
         super.onPause();
     }
 
+    /**
+     * A utility method to inform user that the input string is not an acceptable type.
+     * The method toggles the color of the input field, makes a sound and does a shake animation
+     */
+    private void rejectUserInput() {
+
+        //Display error to user and play sound
+        soundManager.getUserInputs().playRejectSound();
+
+        //Retrieve animation and start
+        Animation shake = AnimationUtils.loadAnimation(RingActivity.this, R.anim.invalidinput_shake);
+        txWord.startAnimation(shake);
+        etUserInput.startAnimation(shake);
+
+        //Change input text color to Red to highlight an invalid input attempt
+        setInputTextColor(R.color.redTextColorOne);
+
+        shake.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if(Vibrator.getInstance().hasVibrator())
+                    Vibrator.getInstance().vibrateInvalidInput();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //Once the animation ends, change it back to it's orignal state
+                setInputTextColor(R.color.blackTextColorOne);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                //Empty Stub
+            }
+        });
+    }
+
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
@@ -218,20 +258,32 @@ public class RingActivity extends AppCompatActivity implements
                         return true;
                     }
 
-                //Display error to user and play sound
-                soundManager.getUserInputs().playRejectSound();
+                rejectUserInput();
             } else
-                //Display error to user and play sound
-                soundManager.getUserInputs().playRejectSound();
+                rejectUserInput();
 
             return true;
         } else
             return false;
     }
 
+    /**
+     * A helper method to toggle colors of input fields at the bottom of this activity.
+     * @param intResid The resource ID of the color which the text fields are to be changed to
+     */
+    private void setInputTextColor(int intResid) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            txWord.setTextColor(getResources().getColor(intResid, getTheme()));
+            etUserInput.setTextColor(getResources().getColor(intResid, getTheme()));
+        } else {
+            txWord.setTextColor(getResources().getColor(intResid));
+            etUserInput.setTextColor(getResources().getColor(intResid));
+        }
+    }
+
     @Override
     public void onGetSuggestions(SuggestionsInfo[] results) {
-
+        //Empty Stub
     }
 
     @Override
