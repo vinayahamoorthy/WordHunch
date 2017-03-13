@@ -254,32 +254,34 @@ public class RingActivity extends AppCompatActivity implements
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
             String strWord = Util.trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
-            if(!TextUtils.isEmpty(etUserInput.getText()) && lsSuggestions != null) {
-                for(String strSuggestion : lsSuggestions)
-                    if(strWord.equalsIgnoreCase(strSuggestion.trim())) {
+            if(!TextUtils.isEmpty(etUserInput.getText()) && lsSuggestions != null)
+                if(adapter.getItems() == null || (adapter.getItems() != null && !adapter.getItems().contains(strWord))) {
+                    for(String strSuggestion : lsSuggestions)
+                        if(strWord.equalsIgnoreCase(strSuggestion.trim())) {
 
-                        //Compute score on a different thread and add to score
-                        RinkScore rinkScore = new RinkScore();
-                        rinkScore.setWord(strWord);
-                        rinkScore.setScoreListener(RingActivity.this);
-                        rinkScore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            //Compute score on a different thread and add to score
+                            RinkScore rinkScore = new RinkScore();
+                            rinkScore.setWord(strWord);
+                            rinkScore.setScoreListener(RingActivity.this);
+                            rinkScore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                        //Add items to the adapter
-                        adapter.addItem(strWord);
+                            //Add items to the adapter
+                            adapter.addItem(strWord);
 
-                        //Clear the user input field
-                        etUserInput.setText("");
+                            //Clear the user input field
+                            etUserInput.setText("");
 
-                        //Scroll the list down so user can see the latest entry
-                        rvUserInputs.smoothScrollToPosition(adapter.getItemCount() - 1);
+                            //Scroll the list down so user can see the latest entry
+                            rvUserInputs.smoothScrollToPosition(adapter.getItemCount() - 1);
 
-                        return true;
-                    }
+                            return true;
+                        }
 
+                    rejectUserInput();
+                } else
+                    rejectUserInput();
+            else
                 rejectUserInput();
-            } else
-                rejectUserInput();
-
             return true;
         } else
             return false;

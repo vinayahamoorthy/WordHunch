@@ -32,6 +32,14 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     /**
+     *
+     * @return
+     */
+    List<String> getItems() {
+        return lsItems;
+    }
+
+    /**
      * A method to add one word at a time. Used when the user taps enter after forming a word
      * @param strItem
      */
