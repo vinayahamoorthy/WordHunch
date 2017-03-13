@@ -27,10 +27,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.daksh.wordhunch.Network.AutoComplete.OnSuggestionCompleteListener;
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.Rink.Events.RequestChallengeEvent;
 import com.daksh.wordhunch.Rink.Sounds.SoundManager;
+import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +51,7 @@ import io.github.krtkush.lineartimer.LinearTimerView;
 public class RingActivity extends AppCompatActivity implements
         TextView.OnEditorActionListener,
         SpellCheckerSession.SpellCheckerSessionListener, TextWatcher,
-        LinearTimer.TimerListener, OnSuggestionCompleteListener, OnScoreUpdateListener {
+        LinearTimer.TimerListener, OnScoreUpdateListener {
 
     //The field where the user inputs the words
     private EditText etUserInput;
@@ -68,9 +73,6 @@ public class RingActivity extends AppCompatActivity implements
     private TextView countdownText;
     //The TextView that holds the score
     private TextView txRinkScore;
-    //A boolean to track if the counter is currently active or not | It is used to ensure
-    //The game doesn't reset when the app comes to foreground from background - challenges are set on onResume
-    private Boolean isCounterActive = false;
     //The current score of the user at any given point
     private int intCurrentScore;
     //The new score won by a new word
@@ -78,6 +80,8 @@ public class RingActivity extends AppCompatActivity implements
     //An object of ScoreIncrease | child of the sound manager that is used to play a sound
     //when the score increases
     private SoundManager soundManager;
+    //An instance of RinkSuggestions class to retrieve suggestions
+    private RinkSuggestions rinkSuggestions;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -97,7 +101,8 @@ public class RingActivity extends AppCompatActivity implements
             etUserInput.setText("");
 
             //Setup a new challenge
-            setChallenge();
+            DialogClass.showBirdDialog(RingActivity.this);
+            EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
 
             //Get focus and open keyboard
             etUserInput.requestFocus();
@@ -112,7 +117,6 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-
         //Release all sound resources with SoundPool
         if(soundManager != null)
             soundManager.release();
@@ -137,6 +141,9 @@ public class RingActivity extends AppCompatActivity implements
         ImageView retry = (ImageView) findViewById(R.id.retry);
         retry.setOnClickListener(replayListener);
 
+        //instantiate the rink suggestions class to register Event listeners on the class
+        rinkSuggestions = new RinkSuggestions();
+
         //Build the timer and start
         linearTimer = new LinearTimer.Builder()
                 //Pass the view
@@ -153,9 +160,15 @@ public class RingActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        //Register this class to accept Events from the event bus
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
         if(soundManager == null || soundManager.getSoundPool() == null)
             //initialize the sound manager via child classes that will be used to play sound files overtime
             soundManager = new SoundManager.Builder()
@@ -163,10 +176,11 @@ public class RingActivity extends AppCompatActivity implements
                     .setupIncorrectEntry()
                     .build();
 
-        if(!isCounterActive) {
+        if(linearTimer.getState() != LinearTimerStates.ACTIVE) {
 
-            //Set Challenge
-            setChallenge();
+            //Set Challenge | Post an event to fetch suggestions
+            DialogClass.showBirdDialog(RingActivity.this);
+            EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
 
             //Force open the keyboard
             if (etUserInput != null) {
@@ -194,6 +208,9 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onPause() {
         super.onPause();
+        //Unregister this class from the EventBus
+        if(EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -341,13 +358,10 @@ public class RingActivity extends AppCompatActivity implements
         txWord.setEnabled(false);
 
         rlViel.setVisibility(View.VISIBLE);
-
-        isCounterActive = false;
     }
 
     @Override
     public void timerTick(long l) {
-        isCounterActive = true;
         countdownText.setText(String.valueOf(l / 1000));
     }
 
@@ -356,25 +370,13 @@ public class RingActivity extends AppCompatActivity implements
         //Empty Stub
     }
 
-    /**
-     * The method that sets up a word challenge and confirms validations with the server
-     */
-    private void setChallenge() {
-        RinkSuggestions rinkSuggestions = new RinkSuggestions(RingActivity.this);
-        rinkSuggestions.getSuggestions();
-    }
-
-    @Override
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChallengeReceived(String strChallenge) {
+        DialogClass.dismissBirdDialog(RingActivity.this);
         txWord.setText(strChallenge);
         //Start the timer
         if(linearTimer.getState() == LinearTimerStates.INITIALIZED)
             linearTimer.startTimer();
-    }
-
-    @Override
-    public Context getContext() {
-        return RingActivity.this;
     }
 
     @Override

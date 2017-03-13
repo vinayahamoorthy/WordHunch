@@ -17,8 +17,8 @@ public class SuggestionsScheduler extends JobService implements OnSuggestionComp
 
         //Create a new instance of suggestions class which downloads and saves the suggestions
         //in the DB
-        RinkSuggestions rinkSuggestions = new RinkSuggestions(SuggestionsScheduler.this);
-        rinkSuggestions.getSuggestions();
+//        RinkSuggestions rinkSuggestions = new RinkSuggestions(SuggestionsScheduler.this);
+//        rinkSuggestions.getSuggestions();
 
         //Return true if there is work remaining in the scheduler | Keep thread alive
         return true;

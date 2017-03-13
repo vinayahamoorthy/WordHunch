@@ -61,7 +61,9 @@
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
         android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textColor="@color/blackTextColorOne"
+        android:textAppearance="@style/TextAppearance.Normal.Black"
+        android:background="@android:color/transparent"
         tools:ignore="RtlSymmetry" />
 
     <EditText
@@ -77,10 +79,11 @@
         android:inputType="textFilter"
         android:lines="1"
         android:text=""
+        android:textColor="@color/blackTextColorOne"
         android:layout_toStartOf="@+id/countdown"
         android:layout_toEndOf="@id/rinkWord"
         android:background="@android:color/transparent"
-        android:textAppearance="@style/TextAppearance.AppCompat">
+        android:textAppearance="@style/TextAppearance.Normal.Black">
         <requestFocus />
     </EditText>
 
