@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -115,14 +116,6 @@ public class RingActivity extends AppCompatActivity implements
     };
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        //Release all sound resources with SoundPool
-        if(soundManager != null)
-            soundManager.release();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ring);
@@ -164,6 +157,8 @@ public class RingActivity extends AppCompatActivity implements
         super.onStart();
         //Register this class to accept Events from the event bus
         EventBus.getDefault().register(this);
+        //Register receiver in the suggestions class
+        rinkSuggestions.registerSubscriber();
     }
 
     @Override
@@ -206,11 +201,18 @@ public class RingActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        //Release all sound resources with SoundPool
+        if(soundManager != null)
+            soundManager.release();
+
         //Unregister this class from the EventBus
         if(EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
+
+        //Unregisters suggestions class from the subscriptions
+        rinkSuggestions.unregisterSubscribe();
     }
 
     /**

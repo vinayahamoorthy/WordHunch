@@ -13,6 +13,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,7 +29,20 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
     public RinkSuggestions() {
         //Empty constructor with private modifier to objects may not be made without passing instance of
         //calling activity
+    }
+
+    /**
+     * Registers this class as a subscriber for Events from the EventBus
+     */
+    public void registerSubscriber() {
         EventBus.getDefault().register(this);
+    }
+
+    /**
+     * Unregisters the subscription by this class
+     */
+    public void unregisterSubscribe() {
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -79,12 +94,12 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
     public void onFailure(Call<DMSuggestions> call, Throwable t) {
 
         //If API failed, fetch item from local DB | Only if the activity requested it
-        Long lngTableCount = suggestionsDao.count();
-        int intRandomEntry = Util.getRandomNumber(Integer.valueOf(String.valueOf(lngTableCount - 1)));
-        DMSuggestions dmSuggestions = suggestionsDao.loadByRowId(intRandomEntry + 1);
+        List<DMSuggestions> dmSuggestions = suggestionsDao.loadAll();
 
-        if (dmSuggestions != null) {
-            String strDefinition = dmSuggestions.getDefinition();
+        if (dmSuggestions != null && !dmSuggestions.isEmpty()) {
+            String strDefinition = dmSuggestions.get(
+                    Util.getRandomNumber(Integer.valueOf(String.valueOf(dmSuggestions.size())))
+            ).getDefinition();
             String strChallenge = Util.getRandomAlphabets(strDefinition);
 
             //Send event to whoever is listening

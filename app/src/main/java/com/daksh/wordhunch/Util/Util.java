@@ -50,7 +50,10 @@ public class Util {
             int intRandomWordLocation = getRandomNumber(words.length);
             String strRandomWord = words[intRandomWordLocation];
             if(strRandomWord.length() > 2)
-                return String.valueOf(strRandomWord.charAt(0)) + String.valueOf(strRandomWord.charAt(1));
+                if(Character.isAlphabetic(strRandomWord.codePointAt(0)) && Character.isAlphabetic(strRandomWord.codePointAt(1)))
+                    return String.valueOf(strRandomWord.charAt(0)) + String.valueOf(strRandomWord.charAt(1));
+                else
+                    return getRandomAlphabets(strSentence);
             else
                 return getRandomAlphabets(strSentence);
         } else
