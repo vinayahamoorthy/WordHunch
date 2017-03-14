@@ -2,13 +2,13 @@
 
 WordHunch is a word guessing game that you can play on your own or with other players across the web. It gives the user two alphabets to begin with and the user is to make as many words as possible which start with the two letters. For each word that is made by the user, points are allocated in accordance with how points are won in the game of scrabble - Each letter carries an associated point.
 
-The catch is to accumulate as may points as possible before the timer runs out. To make things interesting, there are certain thresholds which when crossed in terms of points, grants users powerups to multiply & increase their points. Powerups such as Double word Score, Triple word score and Double total score are up for grabs. 
+The catch is to accumulate as many points as possible before the timer runs out. To make things interesting, there are certain thresholds which when crossed in terms of points, grants users powerups to multiply & increase their points. Powerups such as Double word Score, Triple word score and Double total score are up for grabs. 
 
 Each challenge that is given to the user in the form of two alphabets are retrieved from Collins dictionary. The app downloads more challenges everyday in the bacground when the device is on charge and idle. The app will cease to function without an active internet connection.
 
 The application is under active development and parts or gameplay may change as the game changes shape. The first version of the game, v0.0.1 is up and downloadable.
 
-##Changlog##
+##Change log##
 
 ###v0.0.1###
 ####Changes / Features####
