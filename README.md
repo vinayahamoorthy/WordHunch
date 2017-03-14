@@ -21,6 +21,10 @@ The application is under active development and parts or gameplay may change as 
 * A dummy notification pops up when the background service executes. Please ignore it;
 * Sometimes, accurate words are not accepted as possible inputs. This happens when the word does not exist on the keyboard but may be correct. No mechanism to verify such words exist;
 
+##Acknowledgements##
+
+* CollinsDictionary : All challenges provided in the app are retrieved from CollinsDitionary's open APIs.
+
 ##Open Source Libraries##
 * RetroFit
 
