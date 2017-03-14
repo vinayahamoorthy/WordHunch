@@ -26,7 +26,7 @@ The application is under active development and parts or gameplay may change as 
 * CollinsDictionary : All challenges provided in the app are retrieved from CollinsDitionary's open APIs.
 
 ##Open Source Libraries##
-* RetroFit
+* [RetroFit](https://github.com/square/retrofit)
 
         Copyright 2013 Square, Inc.
 
@@ -42,7 +42,7 @@ The application is under active development and parts or gameplay may change as 
         See the License for the specific language governing permissions and
         limitations under the License.
         
-* OkHttp
+* [OkHttp](https://github.com/square/okhttp)
 
         Copyright 2016 Square, Inc.
 
@@ -58,8 +58,8 @@ The application is under active development and parts or gameplay may change as 
         See the License for the specific language governing permissions and
         limitations under the License.
 
-* LinearTimer (GPL v3)
-* GreenDao
+* [LinearTimer (GPL v3)](https://github.com/krtkush/LinearTimer)
+* [GreenDao](https://github.com/greenrobot/greenDAO)
 
         Copyright 2014 Markus Junginger, greenrobot.
 
@@ -75,7 +75,7 @@ The application is under active development and parts or gameplay may change as 
         See the License for the specific language governing permissions and
         limitations under the License.
         
-* EventBus
+* [EventBus](https://github.com/greenrobot/EventBus)
 
         Copyright 2012-16 Markus Junginger, greenrobot.
 
