@@ -1,5 +1,7 @@
 ## WordHunch ##
 
+[Download latest available version](https://sourceforge.net/projects/wordhunch/files/WordHunch%20-%20v0.0.1.apk/download)
+
 WordHunch is a word guessing game that you can play on your own or with other players across the web. It gives the user two alphabets to begin with and the user is to make as many words as possible which start with the two letters. For each word that is made by the user, points are allocated in accordance with how points are won in the game of scrabble - Each letter carries an associated point.
 
 The catch is to accumulate as many points as possible before the timer runs out. To make things interesting, there are certain thresholds which when crossed in terms of points, grants users powerups to multiply & increase their points. Powerups such as Double word Score, Triple word score and Double total score are up for grabs. 
