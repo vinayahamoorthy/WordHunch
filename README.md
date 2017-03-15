@@ -1,4 +1,4 @@
-##WordHunch##
+## WordHunch ##
 
 WordHunch is a word guessing game that you can play on your own or with other players across the web. It gives the user two alphabets to begin with and the user is to make as many words as possible which start with the two letters. For each word that is made by the user, points are allocated in accordance with how points are won in the game of scrabble - Each letter carries an associated point.
 
@@ -8,24 +8,24 @@ Each challenge that is given to the user in the form of two alphabets are retrie
 
 The application is under active development and parts or gameplay may change as the game changes shape. The first version of the game, v0.0.1 is up and downloadable.
 
-##Change log##
+## Change log ##
 
-###v0.0.1###
-####Changes / Features####
+### v0.0.1 ###
+#### Changes / Features ####
 * First draft release of the app;
 * Contains background processes to download and purge suggestions;
 * Scoring mechanism works as intended;
 * Every user input is compared against suggestions from the keyboard. Cannot cross reference accuracy at this time;
 
-####Known Issues###
+#### Known Issues ###
 * A dummy notification pops up when the background service executes. Please ignore it;
 * Sometimes, accurate words are not accepted as possible inputs. This happens when the word does not exist on the keyboard but may be correct. No mechanism to verify such words exist;
 
-##Acknowledgements##
+## Acknowledgements ##
 
 * CollinsDictionary : All challenges provided in the app are retrieved from CollinsDitionary's open APIs.
 
-##Open Source Libraries##
+## Open Source Libraries ##
 * [RetroFit](https://github.com/square/retrofit)
 
         Copyright 2013 Square, Inc.
