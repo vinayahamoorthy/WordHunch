@@ -5,17 +5,17 @@ import android.media.SoundPool;
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.WordHunch;
 
-public class SMScoreIncrease {
+public class SMTimerEnd {
 
     /**
-     * the sound ID of the raw file se_increase_score which is returned by the soundPool.load() method.
+     * the sound ID of the raw file se_timer_end which is returned by the soundPool.load() method.
      * The SoundID is issued at class initialization and may be used later to play or unload the
      * sound from memory
      */
     private int soundID;
 
     /**
-     * The stream ID of the climbing score sound | This stream ID is used to control playback
+     * The stream ID of the timer ending sound | This stream ID is used to control playback
      * when the file is being played
      */
     private int streamID;
@@ -33,9 +33,9 @@ public class SMScoreIncrease {
      * @param soundPool A soundPool object used to load raw music files and extract a SoundID to be
      *                  used later to perform functions on the sound
      */
-    SMScoreIncrease(SoundPool soundPool) {
+    SMTimerEnd(SoundPool soundPool) {
         this.soundPool = soundPool;
-        soundID = soundPool.load(WordHunch.getContext(), R.raw.se_increase_score, 1);
+        soundID = soundPool.load(WordHunch.getContext(), R.raw.se_timer_end, 1);
     }
 
     /**
@@ -47,7 +47,7 @@ public class SMScoreIncrease {
      */
     public void playSound() throws IllegalStateException {
         if(soundPool != null)
-            streamID = soundPool.play(soundID, 1, 1, 1, 0, 2.0f);
+            streamID = soundPool.play(soundID, 1f, 1f, 1, 0, 0.9f);
         else
             throw new IllegalStateException();
     }

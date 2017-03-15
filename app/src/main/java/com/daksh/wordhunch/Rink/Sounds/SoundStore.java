@@ -4,5 +4,7 @@ public enum SoundStore {
 
     ScoreIncrease,
 
-    RejectEntry;
+    RejectEntry,
+
+    TimerSounds
 }

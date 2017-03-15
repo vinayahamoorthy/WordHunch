@@ -168,6 +168,7 @@ public class RingActivity extends AppCompatActivity implements
             soundManager = new SoundManager.Builder()
                     .setupScoreSounds()
                     .setupIncorrectEntry()
+                    .setupTimerSounds()
                     .build();
 
         if(linearTimer.getState() != LinearTimerStates.ACTIVE) {
@@ -364,8 +365,15 @@ public class RingActivity extends AppCompatActivity implements
     }
 
     @Override
+
     public void timerTick(long l) {
+        //Set the elapsed time on the timer TextView
         countdownText.setText(String.valueOf(l / 1000));
+
+        //Start playing the Timer End sound file if time is less than or equal to 5 seconds
+        if(TimeUnit.MILLISECONDS.toSeconds(l) == 5)
+            if(soundManager != null && soundManager.getSoundPool() != null)
+                soundManager.getTimerSounds().playSound();
     }
 
     @Override

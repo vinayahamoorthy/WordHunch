@@ -25,6 +25,11 @@ public class SoundManager {
     private SMUserEntries smUserEntries;
 
     /**
+     * The TimerEnd SoundManager auxiliary file that is used to play sounds related to timers
+     */
+    private SMTimerEnd smTimerEnd;
+
+    /**
      * The soundManager Constructor that calls the appropriate initialization method based on
      * the version of SDK running on the user's device.
      */
@@ -56,6 +61,18 @@ public class SoundManager {
     @NonNull
     public SMUserEntries getUserInputs() {
         return smUserEntries;
+    }
+
+    /**
+     * The method returns the smTimerEnd object which is used to play whatever soundFiles
+     * are associated with the object
+     * Ex : Music when the timer is about to end - 5 or less seconds remaining
+     * @return Returns An smTimerEnd object that may be used to access soundFiles associated with
+     *                 the object
+     */
+    @NonNull
+    public SMTimerEnd getTimerSounds() {
+        return smTimerEnd;
     }
 
     /**
@@ -143,6 +160,27 @@ public class SoundManager {
         }
 
         /**
+         * A method to setup the sound resources to be used when the timer is running out of time.
+         * The sound file for this particular function is a 4 second long music file that is
+         * started when the timer has only 5 seconds left on the board.
+         * @return Builder Returns the builder class for the builder implementation.
+         */
+        public Builder setupTimerSounds() {
+            if(soundStores != null)
+                for(int intCounter = 0 ; intCounter < soundStores.length ; intCounter++)
+                    if(soundStores[intCounter] == SoundStore.TimerSounds)
+                        return this;
+                    else if(soundStores[intCounter] == null) {
+                        //If the program execution reaches null, soundStores does not have SoundStore.TimerSounds
+                        //Hence, we add it to the soundStores object
+                        soundStores[intCounter] = SoundStore.TimerSounds;
+                        break;
+                    }
+
+            return this;
+        }
+
+        /**
          * A method to setup the sound resources to be used when a user entry is rejected. The sound
          * file for this particular function is a 1 second long obstruction type sound that is
          * played when the user taps on 'submit/enter/go' but the entry is not valid
@@ -185,6 +223,11 @@ public class SoundManager {
                 if (soundStore != null && soundStore.equals(SoundStore.ScoreIncrease))
                     //initialize
                     soundManager.smUserEntries = new SMUserEntries(soundPool);
+
+                //Test if SoundStore contains TimerEnd API
+                if (soundStore != null && soundStore.equals(SoundStore.TimerSounds))
+                    //initialize
+                    soundManager.smTimerEnd = new SMTimerEnd(soundPool);
             }
             //Return the soundManager to the user so the only point of contact to play sounds is the SoundManager
             return soundManager;
