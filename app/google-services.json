@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "434776912424",
+    "firebase_url": "https://wordhunch-9a0a6.firebaseio.com",
+    "project_id": "wordhunch-9a0a6",
+    "storage_bucket": "wordhunch-9a0a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434776912424:android:987ab3e0c1a3602f",
+        "android_client_info": {
+          "package_name": "com.daksh.wordhunch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434776912424-2h0fmqk3e8h96g51hcdj1flsde1b7k0d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daksh.wordhunch",
+            "certificate_hash": "5256495fe265caefdeb25e24201a5d6ce0438311"
+          }
+        },
+        {
+          "client_id": "434776912424-o2qhsjgmok1hf0gq13ej66couinh9a11.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNUdmV-of2i0RgemPe2Hgnsuopfv8Zpvc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434776912424-o2qhsjgmok1hf0gq13ej66couinh9a11.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

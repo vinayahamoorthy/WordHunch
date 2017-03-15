@@ -16,6 +16,8 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.greendao.database.Database;
 
@@ -33,6 +35,11 @@ public class WordHunch extends Application {
      */
     private static DaoSession daoSession;
 
+    /**
+     * A boolean to identify if the build is debug or not
+     */
+    private boolean isDebug = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,9 +48,20 @@ public class WordHunch extends Application {
         //Initialize RetroFit
         RetroFit.initializeRetroFit();
 
+        //Load SQL Cipher only if application is not of debug type
+        if (!isDebug)
+            SQLiteDatabase.loadLibs(this);
+
         //Initialize GreenDAO
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "WordHunch-db");
-        Database db = helper.getWritableDb();
+
+        Database db = null;
+        //Get normal writable DB if debug is enabled | If not, use Cipher
+        if (isDebug)
+            db = helper.getWritableDb();
+        else
+            db = helper.getEncryptedWritableDb(WordHunch.class.getSimpleName());
+
         daoSession = new DaoMaster(db).newSession();
 
         //Execute a job scheduler to download suggestions once everyday when the device is on charging
