@@ -11,6 +11,4 @@
 
     <!-- Word Link strings -->
     <string name="WordList_Empty">Words you enter will appear here!</string>
-    <string name="com.gameanalytics.apiSecret" translatable="false">9865771378c9f3e4c94f8008b974f0a2907687ce</string>
-    <string name="com.gameanalytics.apiKey" translatable="false">f7a7c8ac81be64eb5236ba6b7acf0048</string>
 </resources>
