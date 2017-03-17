@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
 import com.daksh.wordhunch.Network.AutoComplete.DaoMaster;
 import com.daksh.wordhunch.Network.AutoComplete.DaoSession;
 import com.daksh.wordhunch.Network.AutoComplete.PurgeScheduler;
@@ -23,6 +25,8 @@ import org.greenrobot.greendao.database.Database;
 
 import java.util.concurrent.TimeUnit;
 
+import io.fabric.sdk.android.Fabric;
+
 public class WordHunch extends MultiDexApplication {
 
     /**
@@ -38,7 +42,7 @@ public class WordHunch extends MultiDexApplication {
     /**
      * A boolean to identify if the build is debug or not
      */
-    private boolean isDebug = true;
+    private boolean isDebug = false;
 
     @Override
     public void onCreate() {
@@ -47,6 +51,17 @@ public class WordHunch extends MultiDexApplication {
         context = this;
         //Initialize RetroFit
         RetroFit.initializeRetroFit();
+
+        if(!isDebug) {
+            Fabric fabric = new Fabric.Builder(this)
+                    .kits(
+                            new Crashlytics(),
+                            new Answers()
+                    )
+                    .debuggable(true)
+                    .build();
+            Fabric.with(fabric);
+        }
 
         //Load SQL Cipher only if application is not of debug type
         if (!isDebug)
