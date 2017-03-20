@@ -13,16 +13,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Rink.RingActivity"
+            android:name=".Menu.ActivityMainMenu"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
-            tools:ignore="InnerclassSeparator">
+            android:theme="@style/MainMenu.theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Rink.RingActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            tools:ignore="InnerclassSeparator" />
+        <activity
+            android:name=".Menu.ActivityAbout"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".Network.AutoComplete.SuggestionsScheduler"

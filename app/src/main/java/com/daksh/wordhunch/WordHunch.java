@@ -42,7 +42,7 @@ public class WordHunch extends MultiDexApplication {
     /**
      * A boolean to identify if the build is debug or not
      */
-    private boolean isDebug = false;
+    private boolean isDebug = true;
 
     @Override
     public void onCreate() {

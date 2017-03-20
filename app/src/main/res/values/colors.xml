@@ -6,6 +6,10 @@
 
     <!-- Text colors -->
     <color name="blackTextColorOne">#54000000</color>
+    <color name="WhiteTextColorOne">#fbfbfb</color>
     <color name="redTextColorOne">#EF5350</color>
+
+    <!-- Backgrounds -->
+    <color name="blackTransparentBackground">#60000000</color>
 
 </resources>

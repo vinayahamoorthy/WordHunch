@@ -44,6 +44,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.github.krtkush.lineartimer.LinearTimer;
 import io.github.krtkush.lineartimer.LinearTimerStates;
 import io.github.krtkush.lineartimer.LinearTimerView;
@@ -54,13 +58,21 @@ public class RingActivity extends AppCompatActivity implements
         LinearTimer.TimerListener, OnScoreUpdateListener {
 
     //The field where the user inputs the words
-    private EditText etUserInput;
+    @BindView(R.id.rinkInput) EditText etUserInput;
     //Field which holds the first two alphabets for the user to build the word on
-    private TextView txWord;
+    @BindView(R.id.rinkWord) TextView txWord;
+    //The textview that shows the time left
+    @BindView(R.id.countdownText) TextView countdownText;
     //A cover view that displays a replay button when the timer expires
-    private RelativeLayout rlViel;
+    @BindView(R.id.cover) RelativeLayout rlVeil;
     //The RecyclerView which holds the words inserted by the user
-    private RecyclerView rvUserInputs;
+    @BindView(R.id.rinkInputList) RecyclerView rvUserInputs;
+    //The TextView that holds the score
+    @BindView(R.id.rinkScore) TextView txRinkScore;
+    //A circular progress bar to keep track of time
+    @BindView(R.id.countdown) LinearTimerView linearTimerView;
+    //A retry button displayed on the cover
+//    @BindView(R.id.retry) ImageView retry;
     //The adapter which builds the word list to be displayed on the RecyclerView
     private SuggestionsAdapter adapter;
     //A list of suggested words received from auto correct against which user inputs are matched
@@ -69,10 +81,6 @@ public class RingActivity extends AppCompatActivity implements
     private SpellCheckerSession spellCheckerSession;
     //A linearTimer object which handles the configuration of the LinearTimerView
     private LinearTimer linearTimer;
-    //The textview that shows the time left
-    private TextView countdownText;
-    //The TextView that holds the score
-    private TextView txRinkScore;
     //The current score of the user at any given point
     private int intCurrentScore;
     //The new score won by a new word
@@ -82,64 +90,50 @@ public class RingActivity extends AppCompatActivity implements
     private SoundManager soundManager;
     //An instance of RinkSuggestions class to retrieve suggestions
     private RinkSuggestions rinkSuggestions;
+    private Unbinder unbinder;
 
     /**
      * A tap listener on the replay button. Resets the game
      */
-    private View.OnClickListener replayListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Set countdown timer to 0
-            if(linearTimer.getState() == LinearTimerStates.FINISHED)
-                linearTimer.resetTimer();
-            //Clear the RecyclerView
-            adapter.clearItems();
-            //Enable editing on the input field and the word challenge
-            etUserInput.setEnabled(true);
-            txWord.setEnabled(true);
-            //Ensure the input area is clear when starting a new game
-            etUserInput.setText("");
+    @OnClick(R.id.retry)
+    public void onRetryClick(View view) {
+        //Set countdown timer to 0
+        if(linearTimer.getState() == LinearTimerStates.FINISHED)
+            linearTimer.resetTimer();
+        //Clear the RecyclerView
+        adapter.clearItems();
+        //Enable editing on the input field and the word challenge
+        etUserInput.setEnabled(true);
+        txWord.setEnabled(true);
+        //Ensure the input area is clear when starting a new game
+        etUserInput.setText("");
 
-            //Setup a new challenge
-            DialogClass.showBirdDialog(RingActivity.this);
-            EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
+        //Setup a new challenge
+        DialogClass.showBirdDialog(RingActivity.this);
+        EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
 
-            //Get focus and open keyboard
-            etUserInput.requestFocus();
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInputFromInputMethod(etUserInput.getWindowToken(), InputMethodManager.SHOW_FORCED);
+        //Get focus and open keyboard
+        etUserInput.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInputFromInputMethod(etUserInput.getWindowToken(), InputMethodManager.SHOW_FORCED);
 
-            //Fade away the veil
-            rlViel.setVisibility(View.GONE);
-        }
-    };
+        //Fade away the veil
+        rlVeil.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ring);
+        unbinder = ButterKnife.bind(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        //Bind views
-        etUserInput = (EditText) findViewById(R.id.rinkInput);
-        txWord = (TextView) findViewById(R.id.rinkWord);
-        rvUserInputs = (RecyclerView) findViewById(R.id.rinkInputList);
-        countdownText = (TextView) findViewById(R.id.countdownText);
-        txRinkScore = (TextView) findViewById(R.id.rinkScore);
-        //A circular progress bar to keep track of time
-        LinearTimerView timerView = (LinearTimerView) findViewById(R.id.countdown);
-        rlViel = (RelativeLayout) findViewById(R.id.cover);
-
-        //A retry button displayed on the cover
-        ImageView retry = (ImageView) findViewById(R.id.retry);
-        retry.setOnClickListener(replayListener);
-
         //instantiate the rink suggestions class to register Event listeners on the class
         rinkSuggestions = new RinkSuggestions();
 
         //Build the timer and start
         linearTimer = new LinearTimer.Builder()
                 //Pass the view
-                .linearTimerView(timerView)
+                .linearTimerView(linearTimerView)
                 //Set the duration for the timer | 90 seconds into Millis
                 .duration(TimeUnit.SECONDS.toMillis(90))
                 //Set the callback listeners
@@ -213,6 +207,10 @@ public class RingActivity extends AppCompatActivity implements
 
         //Unregisters suggestions class from the subscriptions
         rinkSuggestions.unregisterSubscribe();
+
+        //Unbind views
+        if(unbinder != null)
+            unbinder.unbind();
     }
 
     /**
@@ -361,7 +359,7 @@ public class RingActivity extends AppCompatActivity implements
         etUserInput.setEnabled(false);
         txWord.setEnabled(false);
 
-        rlViel.setVisibility(View.VISIBLE);
+        rlVeil.setVisibility(View.VISIBLE);
     }
 
     @Override

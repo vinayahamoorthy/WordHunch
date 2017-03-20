@@ -7,9 +7,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MainMenu.theme" parent="AppTheme">
+        <item name="android:background">@color/blackTransparentBackground</item>
+    </style>
+
     <style name="TextAppearance.Normal.Black" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/blackTextColorOne</item>
         <item name="android:textSize">@dimen/abc_text_size_body_1_material</item>
+    </style>
+
+    <style name="TextAppearance.ExtraLarge.White" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/WhiteTextColorOne</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">casual</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 </resources>
