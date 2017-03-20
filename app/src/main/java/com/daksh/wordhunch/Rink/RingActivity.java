@@ -23,7 +23,6 @@ import android.view.textservice.SuggestionsInfo;
 import android.view.textservice.TextInfo;
 import android.view.textservice.TextServicesManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 import io.github.krtkush.lineartimer.LinearTimer;
 import io.github.krtkush.lineartimer.LinearTimerStates;
 import io.github.krtkush.lineartimer.LinearTimerView;
@@ -90,7 +88,6 @@ public class RingActivity extends AppCompatActivity implements
     private SoundManager soundManager;
     //An instance of RinkSuggestions class to retrieve suggestions
     private RinkSuggestions rinkSuggestions;
-    private Unbinder unbinder;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -125,7 +122,7 @@ public class RingActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ring);
-        unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //instantiate the rink suggestions class to register Event listeners on the class
         rinkSuggestions = new RinkSuggestions();
@@ -208,9 +205,9 @@ public class RingActivity extends AppCompatActivity implements
         //Unregisters suggestions class from the subscriptions
         rinkSuggestions.unregisterSubscribe();
 
-        //Unbind views
-        if(unbinder != null)
-            unbinder.unbind();
+        //Destroy the LinearTimer
+        linearTimer.pauseTimer();
+        linearTimer.resetTimer();
     }
 
     /**
@@ -363,7 +360,6 @@ public class RingActivity extends AppCompatActivity implements
     }
 
     @Override
-
     public void timerTick(long l) {
         //Set the elapsed time on the timer TextView
         countdownText.setText(String.valueOf(l / 1000));

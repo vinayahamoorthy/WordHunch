@@ -27,8 +27,8 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
     private DMSuggestionsDao suggestionsDao;
 
     public RinkSuggestions() {
-        //Empty constructor with private modifier to objects may not be made without passing instance of
-        //calling activity
+        //Instantiate the suggestions table DAO
+        suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
     }
 
     /**
@@ -112,9 +112,6 @@ public class RinkSuggestions implements Callback<DMSuggestions> {
      * challenge
      */
     private boolean hasTodaysChallenge() {
-        //Instantiate the suggestions table DAO
-        suggestionsDao = WordHunch.getDaoSession().getDMSuggestionsDao();
-
         //Make a query to check if today's word of the day has been downloaded or not
         DMSuggestions dmSuggestions = suggestionsDao.queryBuilder()
                 .where(DMSuggestionsDao.Properties.Date.eq(
