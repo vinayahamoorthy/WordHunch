@@ -154,7 +154,7 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if(soundManager == null || soundManager.getSoundPool() == null)
+        if (soundManager == null || soundManager.getSoundPool() == null)
             //initialize the sound manager via child classes that will be used to play sound files overtime
             soundManager = new SoundManager.Builder()
                     .setupScoreSounds()
@@ -162,7 +162,7 @@ public class RingActivity extends AppCompatActivity implements
                     .setupTimerSounds()
                     .build();
 
-        if(linearTimer.getState() != LinearTimerStates.ACTIVE) {
+        if (linearTimer.getState() != LinearTimerStates.ACTIVE) {
 
             //Set Challenge | Post an event to fetch suggestions
             DialogClass.showBirdDialog(RingActivity.this);
@@ -176,7 +176,6 @@ public class RingActivity extends AppCompatActivity implements
                 //Set up word listener on the user input field
                 etUserInput.setOnEditorActionListener(RingActivity.this);
                 etUserInput.addTextChangedListener(RingActivity.this);
-
                 etUserInput.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
             }
 

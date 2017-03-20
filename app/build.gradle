@@ -64,6 +64,9 @@ android {
     dexOptions {
         preDexLibraries = false
     }
+    packagingOptions {
+        exclude 'META-INF/MANIFEST.MF'
+    }
 }
 apt {
     arguments {
@@ -79,12 +82,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     //Google stuff
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile ('com.android.support:appcompat-v7:25.3.0') {
+        exclude group: 'com.google.firebase'
+    }
     compile 'com.android.support:support-annotations:25.3.0'
     compile 'com.android.support:design:25.3.0'
     compile 'com.android.support:support-v4:25.3.0'
     compile 'com.android.support:recyclerview-v7:25.3.0'
     compile 'com.android.support:multidex:1.0.1'
+    compile 'com.google.android.gms:play-services-games:10.2.0'
+    compile 'com.google.android.gms:play-services-base:10.2.0'
+    compile 'com.google.android.gms:play-services-gcm:10.2.0'
 
     //Fabric
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
@@ -128,7 +136,8 @@ dependencies {
     apt ('org.greenrobot:eventbus-annotation-processor:3.0.1') {
         exclude group: 'com.google.firebase'
         exclude group: 'com.google.android.gms'
+        exclude module: 'firebase-core'
     }
 }
 
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
