@@ -70,16 +70,4 @@ public class ActivityMainMenu extends AppCompatActivity {
         Intent intent = new Intent(this, RingActivity.class);
         startActivity(intent);
     }
-
-    @OnClick(R.id.menu_about)
-    public void onMenuAbout() {
-        Intent intent = new Intent(this, ActivityAbout.class);
-        startActivity(intent);
-    }
-
-//    @OnClick(R.id.menu_start)
-//    public void onMenuStart(View view) {
-//        Intent intent = new Intent(this, RingActivity.class);
-//        startActivity(intent);
-//    }
 }

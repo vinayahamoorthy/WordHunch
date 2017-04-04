@@ -11,5 +11,7 @@
 
     <!-- Backgrounds -->
     <color name="blackTransparentBackground">#60000000</color>
+    <color name="tealLight">#00796B</color>
+    <color name="tealLightPressed">#004D40</color>
 
 </resources>
