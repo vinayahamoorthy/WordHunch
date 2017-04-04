@@ -42,7 +42,17 @@
         android:layout_centerHorizontal="true"
         android:foregroundGravity="center"
         android:padding="15dp"
+        android:layout_alignParentBottom="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_leaderboard"
+        android:background="@drawable/effect_ripple_purple"
+        android:foregroundGravity="center"
+        android:padding="15dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="30dp"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"/>
 
 </RelativeLayout>

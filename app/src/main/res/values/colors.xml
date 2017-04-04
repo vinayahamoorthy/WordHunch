@@ -19,4 +19,7 @@
 
     <color name="orangeLight">#EF6C00</color>
     <color name="orangeDark">#E65100</color>
+
+    <color name="purpleLight">#4527A0</color>
+    <color name="purpleDark">#311B92</color>
 </resources>
