@@ -26,6 +26,23 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_settings"
+        android:background="@drawable/effect_ripple_cyan"
+        android:foregroundGravity="center"
+        android:padding="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_about"
+        android:background="@drawable/effect_ripple_orange"
+        android:layout_centerHorizontal="true"
+        android:foregroundGravity="center"
+        android:padding="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"/>
 
 </RelativeLayout>
