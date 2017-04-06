@@ -1,6 +1,7 @@
 package com.daksh.wordhunch.Rink;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,6 +32,8 @@ import com.daksh.wordhunch.Rink.Events.RequestChallengeEvent;
 import com.daksh.wordhunch.Rink.Sounds.SoundManager;
 import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
+import com.daksh.wordhunch.WordHunch;
+import com.google.android.gms.games.Games;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -54,6 +57,9 @@ public class RingActivity extends AppCompatActivity implements
         TextView.OnEditorActionListener,
         SpellCheckerSession.SpellCheckerSessionListener, TextWatcher,
         LinearTimer.TimerListener, OnScoreUpdateListener {
+
+    //A string param used to send a boolean value to this activity that
+    public static String PARAM_EXTRA_ISFIRST = "PARAM_EXTRA_ISFIRST";
 
     //The field where the user inputs the words
     @BindView(R.id.rinkInput) EditText etUserInput;
@@ -80,9 +86,9 @@ public class RingActivity extends AppCompatActivity implements
     //A linearTimer object which handles the configuration of the LinearTimerView
     private LinearTimer linearTimer;
     //The current score of the user at any given point
-    private int intCurrentScore;
+    private long intCurrentScore;
     //The new score won by a new word
-    private int intNewScore;
+    private long intNewScore;
     //An object of ScoreIncrease | child of the sound manager that is used to play a sound
     //when the score increases
     private SoundManager soundManager;
@@ -356,6 +362,23 @@ public class RingActivity extends AppCompatActivity implements
         txWord.setEnabled(false);
 
         rlVeil.setVisibility(View.VISIBLE);
+        //Submit score to Single Round High Score leader board
+        Games.Leaderboards.submitScore(
+                WordHunch.getGoogleApiClient(),
+                getString(R.string.play_leaderboard_SingleRoundHighScore),
+                intNewScore);
+
+        //Extract the isFirst Timer boolean in the intent to specify if a round was completed for the
+        //first time. Based on value, the FirstBlood achievement is unlocked
+        boolean isFirstTimer = getIntent().getBooleanExtra(
+                PARAM_EXTRA_ISFIRST,
+                true
+        );
+        if(isFirstTimer)
+            Games.Achievements.unlock(
+                    WordHunch.getGoogleApiClient(),
+                    getString(R.string.play_achievement_FirstBlood)
+            );
     }
 
     @Override
@@ -415,5 +438,54 @@ public class RingActivity extends AppCompatActivity implements
                               },
                 0, //Execute timerTask immediately without delay
                 20); //Recursively execute timerTask at an interim period of 20 millis
+    }
+
+    //RingActivity is used in associated with a builder pattern. This is done so as to ensure all
+    //prerequisite parameters are sent to the activity that are required to ensure its proper
+    //functioning. This ensures even when someone else than the primary developer works on this activity.
+    //s/he will not have to go through layers of code to find which params are required
+    //to instantiate this module.
+    public static class Builder {
+
+        //A context to the instantiating activity
+        private Context context;
+        //A boolean value that determines if the game is being played for the first time or not
+        private Boolean isFirstTime;
+
+        private Builder() {
+            //Empty private constructor to disable instantiation
+        }
+
+        /**
+         * The constructor to be called to instantiate the class.
+         * @param context The context of the calling activity is required to manufacture the intent
+         */
+        public Builder(Context context) {
+            this.context = context;
+        }
+
+        /**
+         * Sets if the game is being played for the first time or not
+         * @param isFirstTime A boolean value that determines if the game is being played for the first
+         *                    time or not. Based on this value the FirstBlood(R.string.play_achievement_FirstBlood)
+         *                    achievement may be unlocked or not.
+         * @return returns an instance of this class
+         */
+        public Builder setFirstTime(Boolean isFirstTime) {
+            this.isFirstTime = isFirstTime;
+            return this;
+        }
+
+        /**
+         * The build method executes and generates an intent. Returns the intent that may be used with
+         * startActivity or startActivityForResult.
+         *
+         * @return Intent that may be used to start the RingActivity.
+         */
+        public Intent build() {
+            Intent intent = new Intent(context, RingActivity.class);
+            intent.putExtra(PARAM_EXTRA_ISFIRST, isFirstTime);
+            return intent;
+        }
     }
 }
