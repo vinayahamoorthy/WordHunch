@@ -25,6 +25,7 @@
         android:textAppearance="@style/TextAppearance.ExtraLarge.White"/>
 
     <ImageView
+        android:id="@+id/menu_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_settings"
@@ -35,6 +36,7 @@
         android:layout_marginStart="30dp"/>
 
     <ImageView
+        android:id="@+id/menu_about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_about"
@@ -45,6 +47,7 @@
         android:layout_alignParentBottom="true" />
 
     <ImageView
+        android:id="@+id/menu_leaderboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_leaderboard"
