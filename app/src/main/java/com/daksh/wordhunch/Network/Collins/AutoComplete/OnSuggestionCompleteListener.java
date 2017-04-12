@@ -1,4 +1,4 @@
-package com.daksh.wordhunch.Network.AutoComplete;
+package com.daksh.wordhunch.Network.Collins.AutoComplete;
 
 import android.content.Context;
 

@@ -2,12 +2,13 @@
     <string name="app_name">WordHunch</string>
 
     <!-- Network Strings -->
-    <!--<string name="RetroFit_API_URI">http://photo-api.guesthouser.com</string> &lt;!&ndash; Production &ndash;&gt;-->
     <string name="RetroFit_API_URI">https://api.collinsdictionary.com/api/</string>
     <string name="RetroFit_API_Version">v1/</string>
     <string name="RetroFit_API_Dict">dictionaries/</string>
     <string name="RetroFit_API_Fail">Could not connect to the server. Please check your internet connection.</string>
     <string name="RetroFit_API_DictCode">english</string>
+
+    <string name="RetroFit_API_WordListURI">https://raw.githubusercontent.com/dakshsrivastava/</string>
 
     <!-- Word Link strings -->
     <string name="WordList_Empty">Words you enter will appear here!</string>

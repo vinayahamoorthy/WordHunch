@@ -34,6 +34,7 @@ import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
 import com.daksh.wordhunch.WordHunch;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,8 +93,6 @@ public class RingActivity extends AppCompatActivity implements
     //An object of ScoreIncrease | child of the sound manager that is used to play a sound
     //when the score increases
     private SoundManager soundManager;
-    //An instance of RinkSuggestions class to retrieve suggestions
-    private RinkSuggestions rinkSuggestions;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -113,7 +112,7 @@ public class RingActivity extends AppCompatActivity implements
 
         //Setup a new challenge
         DialogClass.showBirdDialog(RingActivity.this);
-        EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
+        EventBus.getDefault().post(new RequestChallengeEvent());
 
         //Get focus and open keyboard
         etUserInput.requestFocus();
@@ -130,8 +129,6 @@ public class RingActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_ring);
         ButterKnife.bind(this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        //instantiate the rink suggestions class to register Event listeners on the class
-        rinkSuggestions = new RinkSuggestions();
 
         //Build the timer and start
         linearTimer = new LinearTimer.Builder()
@@ -153,8 +150,6 @@ public class RingActivity extends AppCompatActivity implements
         super.onStart();
         //Register this class to accept Events from the event bus
         EventBus.getDefault().register(this);
-        //Register receiver in the suggestions class
-        rinkSuggestions.registerSubscriber();
     }
 
     @Override
@@ -172,7 +167,7 @@ public class RingActivity extends AppCompatActivity implements
 
             //Set Challenge | Post an event to fetch suggestions
             DialogClass.showBirdDialog(RingActivity.this);
-            EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_ALL));
+            EventBus.getDefault().post(new RequestChallengeEvent());
 
             //Force open the keyboard
             if (etUserInput != null) {
@@ -207,8 +202,6 @@ public class RingActivity extends AppCompatActivity implements
         if(EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
 
-        //Unregisters suggestions class from the subscriptions
-        rinkSuggestions.unregisterSubscribe();
 
         //Destroy the LinearTimer
         linearTimer.pauseTimer();
@@ -379,6 +372,13 @@ public class RingActivity extends AppCompatActivity implements
                     WordHunch.getGoogleApiClient(),
                     getString(R.string.play_achievement_FirstBlood)
             );
+
+        startActivityForResult(
+                Games.Leaderboards.getLeaderboardIntent(
+                        WordHunch.getGoogleApiClient(),
+                        getString(R.string.play_leaderboard_SingleRoundHighScore)
+                ),
+                1);
     }
 
     @Override

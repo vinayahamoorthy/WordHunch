@@ -1,29 +1,30 @@
 package com.daksh.wordhunch.Menu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import com.daksh.wordhunch.Menu.Events.IsFirstRunEvent;
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.Rink.Events.RequestChallengeEvent;
 import com.daksh.wordhunch.Rink.RingActivity;
-import com.daksh.wordhunch.Rink.RinkSuggestions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.games.leaderboard.Leaderboards;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ActivityMainMenu extends AppCompatActivity {
 
-    //An instance of RinkSuggestions class to retrieve suggestions
-    private RinkSuggestions rinkSuggestions;
+    //Bind views with butterknife
+    @BindView(R.id.menu_start_container) TextView flStart;
+    @BindView(R.id.menu_start) TextView txStart;
+
     //A boolean to track if the user is arriving on this app for the first time or not.
     //Depending on the response, the FirtBlood (R.string.play_achievement_FirstBlood)
     //achievement will be unlocked or not by sending a param to the RinkActivity activity.
@@ -35,9 +36,6 @@ public class ActivityMainMenu extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
         //Bind Views
         ButterKnife.bind(this);
-
-        //instantiate the rink suggestions class to register Event listeners on the class
-        rinkSuggestions = new RinkSuggestions();
     }
 
     @Override
@@ -45,8 +43,6 @@ public class ActivityMainMenu extends AppCompatActivity {
         super.onStart();
         //Register this class to accept Events from the event bus
         EventBus.getDefault().register(this);
-        //Register receiver in the suggestions class
-        rinkSuggestions.registerSubscriber();
     }
 
     @Override
@@ -55,7 +51,7 @@ public class ActivityMainMenu extends AppCompatActivity {
 
         //Send Event to Request New challenge | Will be received in RinkSuggestions class
         if(EventBus.getDefault().hasSubscriberForEvent(RequestChallengeEvent.class))
-            EventBus.getDefault().post(new RequestChallengeEvent(RequestChallengeEvent.RequestMode.CHALLENGE_NETWORK));
+            EventBus.getDefault().post(new RequestChallengeEvent());
     }
 
     @Override
@@ -63,12 +59,6 @@ public class ActivityMainMenu extends AppCompatActivity {
         super.onPause();
         //Unregister
         EventBus.getDefault().unregister(this);
-        rinkSuggestions.unregisterSubscribe();
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onChallengeReceived(String strChallenge) {
-        //Challenge received | Do nothing.
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -96,5 +86,41 @@ public class ActivityMainMenu extends AppCompatActivity {
     public void onMenuAbout() {
         Intent intent = new Intent(this, ActivityAbout.class);
         startActivity(intent);
+    }
+
+    //MainMenu is used in associated with a builder pattern. This is done so as to ensure all
+    //prerequisite parameters are sent to the activity that are required to ensure its proper
+    //functioning. This ensures even when someone else than the primary developer works on this activity.
+    //s/he will not have to go through layers of code to find which params are required
+    //to instantiate this module.
+    public static class Builder {
+
+        //A context to the instantiating activity
+        private Context context;
+        //A boolean value that determines if the game is being played for the first time or not
+        private Boolean isFirstTime;
+
+        private Builder() {
+            //Empty private constructor to disable instantiation
+        }
+
+        /**
+         * The constructor to be called to instantiate the class.
+         * @param context The context of the calling activity is required to manufacture the intent
+         */
+        public Builder(Context context) {
+            this.context = context;
+        }
+
+        /**
+         * The build method executes and generates an intent. Returns the intent that may be used with
+         * startActivity or startActivityForResult.
+         *
+         * @return Intent that may be used to start the RingActivity.
+         */
+        public Intent build() {
+            Intent intent = new Intent(context, ActivityMainMenu.class);
+            return intent;
+        }
     }
 }

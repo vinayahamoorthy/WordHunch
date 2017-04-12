@@ -42,9 +42,9 @@ android {
 
     splits {
         abi {
-            enable true
+            enable false
             reset()
-            include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            include 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
             universalApk false
         }
     }
@@ -82,17 +82,17 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     //Google stuff
-    compile ('com.android.support:appcompat-v7:25.3.0') {
+    compile ('com.android.support:appcompat-v7:25.3.1') {
         exclude group: 'com.google.firebase'
     }
-    compile 'com.android.support:support-annotations:25.3.0'
-    compile 'com.android.support:design:25.3.0'
-    compile 'com.android.support:support-v4:25.3.0'
-    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.android.support:support-annotations:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services-games:10.2.0'
-    compile 'com.google.android.gms:play-services-base:10.2.0'
-    compile 'com.google.android.gms:play-services-gcm:10.2.0'
+    compile 'com.google.android.gms:play-services-games:10.2.1'
+    compile 'com.google.android.gms:play-services-base:10.2.1'
+    compile 'com.google.android.gms:play-services-gcm:10.2.1'
 
     //Fabric
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {

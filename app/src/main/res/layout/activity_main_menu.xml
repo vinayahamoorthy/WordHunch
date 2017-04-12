@@ -4,24 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.daksh.wordhunch.Menu.ActivityMainMenu"
-    android:orientation="vertical"
-    android:paddingTop="150dp"
-    android:paddingBottom="150dp">
+    android:background="@color/WhiteTextColorOne"
+    tools:context="com.daksh.wordhunch.Menu.ActivityMainMenu">
+
+    <TextView
+        android:id="@+id/menu_start_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/effect_ripple_green" />
 
     <TextView
         android:id="@+id/menu_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:text="Start"
         android:background="@drawable/effect_ripple_green"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_centerHorizontal="true"
+        android:text="Start"
         android:textAppearance="@style/TextAppearance.ExtraLarge.White"/>
 
     <ImageView

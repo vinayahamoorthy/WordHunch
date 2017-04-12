@@ -1,4 +1,4 @@
-package com.daksh.wordhunch.Network;
+package com.daksh.wordhunch.Network.Collins;
 
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.WordHunch;
@@ -15,7 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RetroFit {
+public class CollinsRetroFit implements com.daksh.wordhunch.Network.Retrofit {
 
     /**
      * API interface in singleton pattern
@@ -23,13 +23,14 @@ public class RetroFit {
     private static Retrofit retrofit = null;
 
     /**
-     * A method to initialize various networking components of Lean4J SDK. This method is only called
-     * from Lean4J at application start up time to ensure resource intensive operations are carried out
+     * A method to initialize various networking components of WordHunch. This method is only called
+     * at application start up time to ensure resource intensive operations are carried out
      * in the background.
      * * okHTTP Client
-     * * RetroFit using RetroFitBuilder
+     * * CollinsRetroFit using RetroFitBuilder
      */
-    public static void initializeRetroFit() {
+    @Override
+    public void onConfigure() {
         // Initialize the logging interceptor to log all service requests
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -40,7 +41,7 @@ public class RetroFit {
                 .addInterceptor(new AuthKeyInterceptor())
                 .addInterceptor(loggingInterceptor);
 
-        //Instantiate RetroFit Library
+        //Instantiate CollinsRetroFit Library
         retrofit = new Retrofit.Builder()
                 //Set up Base URL
                 .baseUrl(
@@ -55,13 +56,19 @@ public class RetroFit {
     }
 
     /**
-     * A method which returns the RetroFit singleton instance of the RetroFit configuration
+     * A method which returns the CollinsRetroFit singleton instance of the CollinsRetroFit configuration
      * built.
      * @return Returns API Interface
      */
-    public static Retrofit getRetroFit() {
+    @Override
+    public Retrofit getRetrofit() {
         //return Retrofit
         return retrofit;
+    }
+
+    @Override
+    public Class instanceOf() {
+        return CollinsRetroFit.class;
     }
 
     /**

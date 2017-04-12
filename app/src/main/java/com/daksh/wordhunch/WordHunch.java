@@ -1,27 +1,19 @@
 package com.daksh.wordhunch;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.multidex.MultiDexApplication;
-import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.daksh.wordhunch.Menu.Events.IsFirstRunEvent;
-import com.daksh.wordhunch.Network.AutoComplete.DaoMaster;
-import com.daksh.wordhunch.Network.AutoComplete.DaoSession;
-import com.daksh.wordhunch.Network.AutoComplete.PurgeScheduler;
-import com.daksh.wordhunch.Network.AutoComplete.SuggestionsScheduler;
-import com.daksh.wordhunch.Network.RetroFit;
-import com.firebase.jobdispatcher.Constraint;
+import com.daksh.wordhunch.Network.Collins.AutoComplete.DaoMaster;
+import com.daksh.wordhunch.Network.Collins.AutoComplete.DaoSession;
+import com.daksh.wordhunch.Network.RetrofitFactory;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -34,8 +26,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.greendao.database.Database;
-
-import java.util.concurrent.TimeUnit;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -61,7 +51,7 @@ public class WordHunch extends MultiDexApplication implements
         //Reference application context
         context = this;
         //Initialize RetroFit
-        RetroFit.initializeRetroFit();
+        RetrofitFactory.build(RetrofitFactory.Source.Collins).onConfigure();
 
         if(!isDebug) {
             Fabric fabric = new Fabric.Builder(this)
@@ -94,10 +84,6 @@ public class WordHunch extends MultiDexApplication implements
         //and internet is present
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
 
-        //Create individual job scheduler to cater to certain tasks
-        createSuggestionJobScheduler(dispatcher);
-        createPurgeJobScheduler(dispatcher);
-
         //Configure the EventBus
         EventBus.builder()
                 .addIndex(new WordHunchBusIndex())
@@ -121,80 +107,6 @@ public class WordHunch extends MultiDexApplication implements
 
         //Initiate the connection
         mGoogleApiClient.connect();
-    }
-
-    /**
-     * Creates a purge job scheduler to be executed in the background which accesses the local database
-     * for suggestions table. Refer {@link PurgeScheduler} for documentation.
-     * @param dispatcher The FireJobDispatcher which creates the job & schedules it
-     */
-    private void createPurgeJobScheduler(FirebaseJobDispatcher dispatcher) {
-        //Build a new job dispatcher to specify when suggestions should be purged in the background
-        //to save space and/or purge parts of the suggestions which are not usable in WordHunch app
-        Job purgeJob = dispatcher.newJobBuilder()
-                //Set a tag for the job
-                .setTag(PurgeScheduler.class.getSimpleName())
-                //Lifetime of forever | Persistence across device reboots
-                .setLifetime(Lifetime.FOREVER)
-                //Set the service to be executed
-                .setService(PurgeScheduler.class)
-                //Execute over and over again based on trigger
-                .setRecurring(true)
-                //Constraint | Device is charging and connected to internet
-                .setConstraints(
-                        Constraint.DEVICE_CHARGING
-                )
-                //Set a trigger to execute this task every 24 hours with a latency tolerance of 1 hour
-                .setTrigger(Trigger.executionWindow(
-                        (int) TimeUnit.HOURS.toSeconds(1),
-                        (int) TimeUnit.HOURS.toSeconds(2)
-                ))
-                //Do not replace if a job exists with the same tag
-                .setReplaceCurrent(false)
-                //Build it
-                .build();
-
-        //Schedule job
-        dispatcher.schedule(purgeJob);
-    }
-
-    /**
-     * Creates a Suggestions job scheduler to be executed in the background which accesses collins'
-     * APIs to download word of the day and uses it's description to create suggestions.
-     * Also, all downloaded entities are stored in the local database to be used when internet connectivity
-     * is missing
-     * Refer {@link PurgeScheduler} for documentation.
-     * @param dispatcher The FireJobDispatcher which creates the job & schedules it
-     */
-    private void createSuggestionJobScheduler(FirebaseJobDispatcher dispatcher) {
-        //Build a new job dispatcher to specify when suggestions should be downloaded
-        //in the background
-        Job backgroundJob = dispatcher.newJobBuilder()
-                //Set a tag for the job
-                .setTag(SuggestionsScheduler.class.getSimpleName())
-                //Lifetime of forever | Persistence across device reboots
-                .setLifetime(Lifetime.FOREVER)
-                //Set the service to be executed
-                .setService(SuggestionsScheduler.class)
-                //Execute over and over again based on trigger
-                .setRecurring(true)
-                //Constraint | Device is charging and connected to internet
-                .setConstraints(
-                        Constraint.DEVICE_CHARGING,
-                        Constraint.ON_ANY_NETWORK
-                )
-                //Set a trigger to execute this task every 24 hours with a latency tolerance of 1 hour
-                .setTrigger(Trigger.executionWindow(
-                        (int) TimeUnit.HOURS.toSeconds(1),
-                        (int) TimeUnit.HOURS.toSeconds(2)
-                ))
-                //Do not replace if a job exists with the same tag
-                .setReplaceCurrent(false)
-                //Build it
-                .build();
-
-        //Schedule job
-        dispatcher.schedule(backgroundJob);
     }
 
     /**
@@ -246,17 +158,17 @@ public class WordHunch extends MultiDexApplication implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // 1. Instantiate an AlertDialog.Builder with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(WordHunch.this);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(WordHunch.this);
 
         // 2. Chain together various setter methods to set the dialog characteristics
-        if(!TextUtils.isEmpty(connectionResult.getErrorMessage()) && connectionResult.getErrorCode() != 0)
-            builder
-                    .setMessage(connectionResult.getErrorMessage())
-                    .setTitle(connectionResult.getErrorCode());
+//        if(!TextUtils.isEmpty(connectionResult.getErrorMessage()) && connectionResult.getErrorCode() != 0)
+//            builder
+//                    .setMessage(connectionResult.getErrorMessage())
+//                    .setTitle(connectionResult.getErrorCode());
 
         // 3. Get the AlertDialog from create()
-        AlertDialog dialog = builder.create();
-        dialog.show();
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
     }
 
     @Override
