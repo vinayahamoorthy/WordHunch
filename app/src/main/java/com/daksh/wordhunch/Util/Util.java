@@ -28,36 +28,32 @@ public class Util {
 
     /**
      * A method that returns a random number from the range 0 - intEnd (The upper limit).
-     * @param intEnd The upper limit to set | so the range from which numbers may be returned
+     * @param lngEnd The upper limit to set | so the range from which numbers may be returned
      *               is 0 - intEnd
      * @return
      */
     @NonNull
-    public static int getRandomNumber(@NonNull Integer intEnd) {
-        return (int) (Math.random() * intEnd);
+    public static Long getRandomNumber(@NonNull Long lngEnd) {
+        return (long) (Math.random() * lngEnd);
     }
 
     /**
      * Methods accepts a sentence as a parameter, splits up the words and returns two alphabets
      * from a word which form the chosen word
-     * @param strSentence The sentence from which the alphabets will be extracted
+     * @param strWord The sentence from which the alphabets will be extracted
      * @return Returns a string of two alphabets to be setup as a challenge for the user
      */
-    @NonNull
-    public static String getRandomAlphabets(@NonNull String strSentence) {
-        if(!TextUtils.isEmpty(strSentence)) {
-            String[] words = strSentence.split(" ");
-            int intRandomWordLocation = getRandomNumber(words.length);
-            String strRandomWord = words[intRandomWordLocation];
-            if(strRandomWord.length() > 2)
-                if(Character.isAlphabetic(strRandomWord.codePointAt(0)) && Character.isAlphabetic(strRandomWord.codePointAt(1)))
-                    return String.valueOf(strRandomWord.charAt(0)) + String.valueOf(strRandomWord.charAt(1));
+    public static String getRandomAlphabets(@NonNull String strWord) {
+        if(!TextUtils.isEmpty(strWord)) {
+            if(strWord.length() > 2)
+                if(Character.isAlphabetic(strWord.codePointAt(0)) && Character.isAlphabetic(strWord.codePointAt(1)))
+                    return String.valueOf(strWord.charAt(0)) + String.valueOf(strWord.charAt(1));
                 else
-                    return getRandomAlphabets(strSentence);
+                    return null;
             else
-                return getRandomAlphabets(strSentence);
+                return null;
         } else
-            return strSentence;
+            return null;
     }
 
     /**

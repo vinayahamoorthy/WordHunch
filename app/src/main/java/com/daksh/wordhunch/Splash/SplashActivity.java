@@ -87,7 +87,12 @@ public class SplashActivity extends AppCompatActivity implements Callback<Respon
                 //Read the next line
                 String strWord = scanner.nextLine();
 
-                lsWordList.add(new DMWordList(strWord));
+                //Instantiate a new DMWordList object and save the word to this object
+                DMWordList wordList = new DMWordList();
+                wordList.setWord(strWord);
+
+                //Add the DMWordList object to the Word list array List
+                lsWordList.add(wordList);
                 //Log the received entry
                 Log.i(SplashActivity.class.getSimpleName(), strWord);
             }

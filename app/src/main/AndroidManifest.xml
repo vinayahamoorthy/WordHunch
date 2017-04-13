@@ -16,10 +16,6 @@
             android:name=".Menu.ActivityMainMenu"
             android:screenOrientation="portrait"
             android:theme="@style/MainMenu.theme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Rink.RingActivity"
@@ -29,28 +25,14 @@
         <activity
             android:name=".Menu.ActivityAbout"
             android:screenOrientation="portrait" />
-
-        <service
-            android:name=".Network.AutoComplete.SuggestionsScheduler"
-            android:exported="false">
+        <activity
+            android:name=".Splash.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </service>
-        <service
-            android:name=".Network.AutoComplete.PurgeScheduler"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="@string/APIKey_Fabric" />
-        <meta-data android:name="com.google.android.gms.games.APP_ID"
-            android:value="@string/app_id" />
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+        </activity>
     </application>
 
 </manifest>

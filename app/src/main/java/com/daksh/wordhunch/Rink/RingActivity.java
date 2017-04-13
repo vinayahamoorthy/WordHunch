@@ -18,15 +18,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.view.textservice.SentenceSuggestionsInfo;
 import android.view.textservice.SpellCheckerSession;
-import android.view.textservice.SuggestionsInfo;
 import android.view.textservice.TextInfo;
 import android.view.textservice.TextServicesManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.daksh.wordhunch.Network.Collins.AutoComplete.DMWordList;
+import com.daksh.wordhunch.Network.Collins.AutoComplete.DMWordListDao;
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.Rink.Events.RequestChallengeEvent;
 import com.daksh.wordhunch.Rink.Sounds.SoundManager;
@@ -34,14 +34,11 @@ import com.daksh.wordhunch.Util.DialogClass;
 import com.daksh.wordhunch.Util.Util;
 import com.daksh.wordhunch.WordHunch;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,7 +53,6 @@ import io.github.krtkush.lineartimer.LinearTimerView;
 
 public class RingActivity extends AppCompatActivity implements
         TextView.OnEditorActionListener,
-        SpellCheckerSession.SpellCheckerSessionListener, TextWatcher,
         LinearTimer.TimerListener, OnScoreUpdateListener {
 
     //A string param used to send a boolean value to this activity that
@@ -81,9 +77,7 @@ public class RingActivity extends AppCompatActivity implements
     //The adapter which builds the word list to be displayed on the RecyclerView
     private SuggestionsAdapter adapter;
     //A list of suggested words received from auto correct against which user inputs are matched
-    private List<String> lsSuggestions = new ArrayList<>();
-    //A spell checker session used to retrieve plausible words the user may enter and accepted
-    private SpellCheckerSession spellCheckerSession;
+//    private List<String> lsSuggestions = new ArrayList<>();
     //A linearTimer object which handles the configuration of the LinearTimerView
     private LinearTimer linearTimer;
     //The current score of the user at any given point
@@ -93,6 +87,8 @@ public class RingActivity extends AppCompatActivity implements
     //An object of ScoreIncrease | child of the sound manager that is used to play a sound
     //when the score increases
     private SoundManager soundManager;
+    //The WordList DAO handler which is used to communicate with the word list table
+    private DMWordListDao wordListDao;
 
     /**
      * A tap listener on the replay button. Resets the game
@@ -121,6 +117,23 @@ public class RingActivity extends AppCompatActivity implements
 
         //Fade away the veil
         rlVeil.setVisibility(View.GONE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void challengeRequest(RequestChallengeEvent event) {
+        //Get the WordListDao
+        DMWordListDao wordListDao = WordHunch.getDaoSession().getDMWordListDao();
+        //Get the number of items in the database and use it to find a random number
+        Long lngRandomNumber = Util.getRandomNumber(wordListDao.count());
+        DMWordList dmWordList = wordListDao.load(lngRandomNumber);
+        String strChallenge = Util.getRandomAlphabets(dmWordList.getWord());
+        //Test if the challenge returned matches the criteria set by getRandomAlphabets method or not
+        //if not, null is returned and the DB is requested for a new word
+        if (!TextUtils.isEmpty(strChallenge)){
+            if (EventBus.getDefault().hasSubscriberForEvent(String.class))
+                EventBus.getDefault().post(strChallenge);
+        } else
+            challengeRequest(null);
     }
 
     @Override
@@ -155,6 +168,10 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+
+        //Load DAO
+        wordListDao = WordHunch.getDaoSession().getDMWordListDao();
+
         if (soundManager == null || soundManager.getSoundPool() == null)
             //initialize the sound manager via child classes that will be used to play sound files overtime
             soundManager = new SoundManager.Builder()
@@ -176,7 +193,6 @@ public class RingActivity extends AppCompatActivity implements
 
                 //Set up word listener on the user input field
                 etUserInput.setOnEditorActionListener(RingActivity.this);
-                etUserInput.addTextChangedListener(RingActivity.this);
                 etUserInput.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
             }
 
@@ -184,10 +200,6 @@ public class RingActivity extends AppCompatActivity implements
             adapter = new SuggestionsAdapter();
             if (rvUserInputs != null)
                 rvUserInputs.setAdapter(adapter);
-
-            //Instantiate the spell checker
-            TextServicesManager servicesManager = (TextServicesManager) getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE);
-            spellCheckerSession = servicesManager.newSpellCheckerSession(null, Locale.UK, RingActivity.this, false);
         }
     }
 
@@ -201,7 +213,6 @@ public class RingActivity extends AppCompatActivity implements
         //Unregister this class from the EventBus
         if(EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
-
 
         //Destroy the LinearTimer
         linearTimer.pauseTimer();
@@ -248,34 +259,34 @@ public class RingActivity extends AppCompatActivity implements
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
-            String strWord = Util.trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
-            if(!TextUtils.isEmpty(etUserInput.getText()) && lsSuggestions != null)
-                if(adapter.getItems() == null || (adapter.getItems() != null && !adapter.getItems().contains(strWord))) {
-                    for(String strSuggestion : lsSuggestions)
-                        if(strWord.equalsIgnoreCase(strSuggestion.trim())) {
+            if(!TextUtils.isEmpty(etUserInput.getText())) {
+                String strWord = Util.trimString(String.valueOf(txWord.getText()) + String.valueOf(etUserInput.getText()));
+                if (adapter.getItems() == null || (adapter.getItems() != null && !adapter.getItems().contains(strWord))) {
+                    DMWordList word = wordListDao.queryBuilder()
+                            .where(DMWordListDao.Properties.Word.eq(strWord.toLowerCase()))
+                            .unique();
+                    if (word != null && !TextUtils.isEmpty(word.getWord()) && strWord.equalsIgnoreCase(word.getWord())) {
+                        //Compute score on a different thread and add to score
+                        RinkScore rinkScore = new RinkScore();
+                        rinkScore.setWord(strWord);
+                        rinkScore.setScoreListener(RingActivity.this);
+                        rinkScore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                            //Compute score on a different thread and add to score
-                            RinkScore rinkScore = new RinkScore();
-                            rinkScore.setWord(strWord);
-                            rinkScore.setScoreListener(RingActivity.this);
-                            rinkScore.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        //Add items to the adapter
+                        adapter.addItem(strWord);
 
-                            //Add items to the adapter
-                            adapter.addItem(strWord);
+                        //Clear the user input field
+                        etUserInput.setText("");
 
-                            //Clear the user input field
-                            etUserInput.setText("");
+                        //Scroll the list down so user can see the latest entry
+                        rvUserInputs.smoothScrollToPosition(adapter.getItemCount() - 1);
 
-                            //Scroll the list down so user can see the latest entry
-                            rvUserInputs.smoothScrollToPosition(adapter.getItemCount() - 1);
-
-                            return true;
-                        }
-
-                    rejectUserInput();
+                        return true;
+                    } else
+                        rejectUserInput();
                 } else
                     rejectUserInput();
-            else
+            } else
                 rejectUserInput();
             return true;
         } else
@@ -294,55 +305,6 @@ public class RingActivity extends AppCompatActivity implements
             txWord.setTextColor(getResources().getColor(intResid));
             etUserInput.setTextColor(getResources().getColor(intResid));
         }
-    }
-
-    @Override
-    public void onGetSuggestions(SuggestionsInfo[] results) {
-        //Empty Stub
-    }
-
-    @Override
-    public void onGetSentenceSuggestions(SentenceSuggestionsInfo[] results) {
-        if(results != null)
-            for(SentenceSuggestionsInfo result : results) {
-                if(result != null) {
-                    int n = result.getSuggestionsCount();
-                    for (int i = 0; i < n; i++) {
-                        int m = result.getSuggestionsInfoAt(i).getSuggestionsCount();
-                        for (int k = 0; k < m; k++) {
-                            String strSuggestion = Util.trimString(result.getSuggestionsInfoAt(i).getSuggestionAt(k));
-
-                            // the word goes on the list only if it starts with the two letters given
-                            //or if there are no spaces
-                            if (strSuggestion.startsWith(Util.trimString(String.valueOf(txWord.getText())))
-                                    || !strSuggestion.contains(" ")
-                                    || !lsSuggestions.contains(strSuggestion))
-                                lsSuggestions.add(strSuggestion);
-                        }
-                    }
-                }
-            }
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        //Empty Stub
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if(spellCheckerSession != null)
-            spellCheckerSession.getSentenceSuggestions(
-                    new TextInfo[]{
-                            new TextInfo(txWord.getText() + String.valueOf(s).toLowerCase())
-                    },
-                    10
-            );
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        //Empty Stub
     }
 
     @Override

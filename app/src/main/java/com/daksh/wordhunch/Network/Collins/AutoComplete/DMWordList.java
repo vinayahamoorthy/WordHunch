@@ -10,12 +10,15 @@ import org.greenrobot.greendao.annotation.Generated;
 )
 public class DMWordList {
 
-    @Id
+    @Id(autoincrement = true)
+    private Long id;
+
     @Unique
     private String word;
 
-    @Generated(hash = 434674902)
-    public DMWordList(String word) {
+    @Generated(hash = 925481380)
+    public DMWordList(Long id, String word) {
+        this.id = id;
         this.word = word;
     }
 
@@ -29,5 +32,13 @@ public class DMWordList {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
