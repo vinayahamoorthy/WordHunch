@@ -12,4 +12,11 @@
 
     <!-- Word Link strings -->
     <string name="WordList_Empty">Words you enter will appear here!</string>
+
+    <!-- About pages -->
+    <string name="AboutPage_Heading">Hi!</string>
+    <string name="AboutPage_Intro">Like it? Hate it? Tell me about it!\ndakshsrivastava@gmail.com</string>
+    <string name="AboutPage_heading_version">Version</string>
+    <string name="AboutPage_heading_github">GitHub</string>
+    <string name="AboutPage_heading_libraries">OpenSource Libraries</string>
 </resources>

@@ -62,7 +62,7 @@
         android:paddingTop="15dp"
         android:textAllCaps="true"
         android:textColor="@color/blackTextColorOne"
-        android:textAppearance="@style/TextAppearance.Normal.Black"
+        android:textAppearance="@style/MyTextAppearance.Normal.Black"
         android:background="@android:color/transparent"
         tools:ignore="RtlSymmetry" />
 
@@ -83,7 +83,7 @@
         android:layout_toStartOf="@+id/countdown"
         android:layout_toEndOf="@id/rinkWord"
         android:background="@android:color/transparent"
-        android:textAppearance="@style/TextAppearance.Normal.Black">
+        android:textAppearance="@style/MyTextAppearance.Normal.Black">
         <requestFocus />
     </EditText>
 

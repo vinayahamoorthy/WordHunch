@@ -31,7 +31,7 @@
         android:paddingBottom="15dp"
         android:background="@drawable/effect_ripple_green"
         android:text="Start"
-        android:textAppearance="@style/TextAppearance.ExtraLarge.White"/>
+        android:textAppearance="@style/MyTextAppearance.ExtraLarge.White"/>
 
     <ImageView
         android:id="@+id/menu_settings"
@@ -42,6 +42,7 @@
         android:foregroundGravity="center"
         android:padding="15dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="150dp"
         android:layout_marginStart="30dp"/>
 
     <ImageView
@@ -53,6 +54,7 @@
         android:layout_centerHorizontal="true"
         android:foregroundGravity="center"
         android:padding="15dp"
+        android:layout_marginBottom="150dp"
         android:layout_alignParentBottom="true" />
 
     <ImageView
@@ -63,6 +65,7 @@
         android:background="@drawable/effect_ripple_purple"
         android:foregroundGravity="center"
         android:padding="15dp"
+        android:layout_marginBottom="150dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"/>

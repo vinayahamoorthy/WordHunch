@@ -11,12 +11,23 @@
         <item name="android:background">@color/blackTransparentBackground</item>
     </style>
 
-    <style name="TextAppearance.Normal.Black" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/blackTextColorOne</item>
-        <item name="android:textSize">@dimen/abc_text_size_body_1_material</item>
+    <style name="MyTextAppearance.Large.Black" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/blackTextColorTwo</item>
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
     </style>
 
-    <style name="TextAppearance.ExtraLarge.White" parent="TextAppearance.AppCompat">
+    <style name="MyTextAppearance.Normal.Black" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/blackTextColorOne</item>
+        <item name="android:textSize">@dimen/abc_text_size_menu_material</item>
+    </style>
+
+    <style name="MyTextAppearance.Large.White" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/WhiteTextColorOne</item>
+        <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="MyTextAppearance.ExtraLarge.White" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/WhiteTextColorOne</item>
         <item name="android:textSize">24sp</item>
         <item name="android:fontFamily">casual</item>
