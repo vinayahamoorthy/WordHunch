@@ -11,6 +11,10 @@
         <item name="android:background">@color/blackTransparentBackground</item>
     </style>
 
+    <style name="AboutPage.Theme" parent="AppTheme">
+        <item name="android:background">@color/WhiteTextColorOne</item>
+    </style>
+
     <style name="MyTextAppearance.Large.Black" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/blackTextColorTwo</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
@@ -33,5 +37,4 @@
         <item name="android:fontFamily">casual</item>
         <item name="android:textAllCaps">true</item>
     </style>
-
 </resources>

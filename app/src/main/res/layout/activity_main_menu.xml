@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_about"
-        android:background="@drawable/effect_ripple_orange"
+        android:background="@drawable/effect_ripple_orange_rounded"
         android:layout_centerHorizontal="true"
         android:foregroundGravity="center"
         android:padding="15dp"

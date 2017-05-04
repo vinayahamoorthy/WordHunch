@@ -1,13 +1,15 @@
 package com.daksh.wordhunch.Menu;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.daksh.wordhunch.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ActivityAbout extends AppCompatActivity {
 
@@ -40,18 +43,36 @@ public class ActivityAbout extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //Parse Email from the entire text to make it clickable
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-
-            }
-        };
-
+        //Set spans on the email portion of the header
+        //get string value of txEmail
         String strEmail = txEmail.getText().toString();
+
+        //Create a spannable string that hosts all spans
         SpannableString spannableString = new SpannableString(strEmail);
-        spannableString.setSpan(clickableSpan, strEmail.indexOf("daksh"), strEmail.length(),
+        //Set a color span to apply on email
+        ForegroundColorSpan colorSpan;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+            colorSpan = new ForegroundColorSpan(getColor(R.color.WhiteTextColorOne));
+        else
+            colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.WhiteTextColorOne));
+        //apply the color span
+        spannableString.setSpan(colorSpan, strEmail.indexOf("daksh"), strEmail.length(),
                 Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+        //apply it on the textView
         txEmail.setText(spannableString);
+//        txEmail.setMovementMethod(new LinkMovementMethod());
+    }
+
+    @OnClick(R.id.aboutPage_introBox)
+    public void onEmailClick(View view) {
+        //Create an intent to send an email when clicked
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, "dakshsrivastava@gmail.com");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "WordHunch Feedback");
+        emailIntent.setData(Uri.parse("mailto:"));
+
+        if(getPackageManager().resolveActivity(emailIntent, PackageManager.MATCH_DEFAULT_ONLY) != null)
+            startActivity(emailIntent);
     }
 }
