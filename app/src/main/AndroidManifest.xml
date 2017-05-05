@@ -15,7 +15,7 @@
         <activity
             android:name=".Menu.ActivityMainMenu"
             android:screenOrientation="portrait"
-            android:theme="@style/MainMenu.theme"
+            android:theme="@style/MyTheme.MainMenu"
             tools:ignore="InnerclassSeparator">
         </activity>
         <activity
@@ -26,7 +26,8 @@
         <activity
             android:name=".Menu.ActivityAbout"
             android:screenOrientation="portrait"
-            tools:ignore="InnerclassSeparator"/>
+            tools:ignore="InnerclassSeparator"
+            android:theme="@style/MyTheme.About"/>
         <activity
             android:name=".Splash.SplashActivity"
             android:screenOrientation="portrait"
@@ -36,15 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="ec46ea8824785d4b2d333ca4089e9a45cecaedf6" />
-        <meta-data
-            android:name="com.google.android.gms.games.APP_ID"
-            android:value="@string/app_id" />
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

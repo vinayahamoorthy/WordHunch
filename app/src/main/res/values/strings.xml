@@ -18,7 +18,7 @@
     <string name="AboutPage_Intro">Like it? Hate it? Tell me about it!\ndakshsrivastava@gmail.com</string>
     <string name="AboutPage_heading_version">Version</string>
     <string name="AboutPage_heading_github">GitHub</string>
-    <string name="AboutPage_text_github">View this project on GitHub. Tap to navigate.</string>
+    <string name="AboutPage_text_github">Tap to View this project on GitHub.</string>
     <string name="AboutPage_heading_libraries">OpenSource Libraries</string>
     <string name="AboutPage_text_libraries">Tap to view licenses</string>
 </resources>
