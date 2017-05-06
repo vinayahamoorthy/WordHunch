@@ -1,6 +1,7 @@
 package com.daksh.wordhunch.Menu;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsService;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.daksh.wordhunch.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +36,7 @@ public class ActivityAbout extends AppCompatActivity {
 
     //A custom tabs client to warm up the custom tab implementation before the URL is actually loaded
     private CustomTabsClient client;
+    private CustomTabsIntent customTabsIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,64 @@ public class ActivityAbout extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         //Bind the views
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //Custom tabs primary color
+        int intColor = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+            intColor = getColor(R.color.orangeLight);
+        else
+            intColor = getResources().getColor(R.color.orangeLight);
+
+        //Custom tabs secondary color
+        int intSecondaryColor = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+            intSecondaryColor = getColor(R.color.orangeDark);
+        else
+            intSecondaryColor = getResources().getColor(R.color.orangeDark);
+
+        //Build a custom tabs intent using a builder
+        customTabsIntent = new CustomTabsIntent.Builder()
+                .setToolbarColor(intColor)
+                .setSecondaryToolbarColor(intSecondaryColor)
+                .setInstantAppsEnabled(false)
+                .setShowTitle(true)
+                .build();
+
+        CustomTabsClient.bindCustomTabsService(ActivityAbout.this, getPackageName(), new CustomTabsServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                client = null;
+            }
+
+            @Override
+            public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+                ActivityAbout.this.client = client;
+            }
+        });
+
+        if(client != null) {
+            //warm up the custom tab
+            client.warmup(1);
+            //Create a new session
+            CustomTabsSession session = client.newSession(new CustomTabsCallback());
+            //Create a new bundle and add the libraries URL as a parcelable
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(CustomTabsService.KEY_URL, Uri.parse("https://github.com/dakshsrivastava/WordHunch/wiki/Open-Source-Libraries-used"));
+
+            //Create a new bundle and add the libraries url bundle to it to pass it as an argument
+            //to mayLaunchUrl method
+            List<Bundle> lsBundle = new ArrayList<>();
+            lsBundle.add(bundle);
+
+            //Build a custom tabs to view github project
+            String strUrl = "https://github.com/dakshsrivastava/WordHunch";
+            session.mayLaunchUrl(Uri.parse(strUrl), null, lsBundle);
+        }
     }
 
     @Override
@@ -68,26 +132,6 @@ public class ActivityAbout extends AppCompatActivity {
 
         //apply it on the textView
         txEmail.setText(spannableString);
-
-        CustomTabsClient.bindCustomTabsService(ActivityAbout.this, getPackageName(), new CustomTabsServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                client = null;
-            }
-
-            @Override
-            public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
-                ActivityAbout.this.client = client;
-            }
-        });
-
-        if(client != null) {
-            client.warmup(1);
-            CustomTabsSession session = client.newSession(new CustomTabsCallback());
-            //Build a custom tabs to view github project
-            String strUrl = "https://github.com/dakshsrivastava/WordHunch";
-            session.mayLaunchUrl(Uri.parse(strUrl), null, null);
-        }
     }
 
     @OnClick(R.id.aboutPage_introBox)
@@ -102,33 +146,56 @@ public class ActivityAbout extends AppCompatActivity {
             startActivity(emailIntent);
     }
 
-    @OnClick(R.id.aboutPage_heading_github_box)
-    public void onGithub(View view) {
-
-        //Custom tabs primary color
-        int intColor = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-            intColor = getColor(R.color.orangeLight);
-        else
-            intColor = getResources().getColor(R.color.orangeLight);
-
-        //Custom tabs secondary color
-        int intSecondaryColor = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-            intSecondaryColor = getColor(R.color.orangeDark);
-        else
-            intSecondaryColor = getResources().getColor(R.color.orangeDark);
-
+    @OnClick(R.id.aboutPage_heading_libraries_box)
+    public void onLibraries(View view) {
         //Build a custom tabs to view github project
-        String strUrl = "https://github.com/dakshsrivastava/WordHunch";
-        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
-                .setToolbarColor(intColor)
-                .setSecondaryToolbarColor(intSecondaryColor)
-                .setInstantAppsEnabled(false)
-                .setShowTitle(true)
-                .build();
+        String strUrl = "https://github.com/dakshsrivastava/WordHunch/wiki/Open-Source-Libraries-used";
 
         //Launch the tabs
         customTabsIntent.launchUrl(ActivityAbout.this, Uri.parse(strUrl));
+    }
+
+    @OnClick(R.id.aboutPage_heading_github_box)
+    public void onGithub(View view) {
+
+        //Build a custom tabs to view github project
+        String strUrl = "https://github.com/dakshsrivastava/WordHunch";
+
+        //Launch the tabs
+        customTabsIntent.launchUrl(ActivityAbout.this, Uri.parse(strUrl));
+    }
+
+    //About Activity is used in association with a builder pattern. This is done so as to ensure all
+    //prerequisite parameters are sent to the activity that are required to ensure its proper
+    //functioning. This ensures even when someone else than the primary developer works on this activity.
+    //s/he will not have to go through layers of code to find which params are required
+    //to instantiate this module.
+    public static class Builder {
+
+        //A context to the instantiating activity
+        private Context context;
+
+        private Builder() {
+            //Empty private constructor to disable instantiation
+        }
+
+        /**
+         * The constructor to be called to instantiate the class.
+         * @param context The context of the calling activity is required to manufacture the intent
+         */
+        public Builder(Context context) {
+            this.context = context;
+        }
+
+        /**
+         * The build method executes and generates an intent. Returns the intent that may be used with
+         * startActivity or startActivityForResult.
+         *
+         * @return Intent that may be used to start the RingActivity.
+         */
+        public Intent build() {
+            Intent intent = new Intent(context, ActivityAbout.class);
+            return intent;
+        }
     }
 }

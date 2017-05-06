@@ -3,7 +3,9 @@ package com.daksh.wordhunch.Menu;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.daksh.wordhunch.Menu.Events.IsFirstRunEvent;
@@ -24,6 +26,7 @@ public class ActivityMainMenu extends AppCompatActivity {
     //Bind views with butterknife
     @BindView(R.id.menu_start_container) TextView flStart;
     @BindView(R.id.menu_start) TextView txStart;
+    @BindView(R.id.menu_about) ImageView vAbout;
 
     //A boolean to track if the user is arriving on this app for the first time or not.
     //Depending on the response, the FirtBlood (R.string.play_achievement_FirstBlood)
@@ -84,7 +87,9 @@ public class ActivityMainMenu extends AppCompatActivity {
      */
     @OnClick(R.id.menu_about)
     public void onMenuAbout() {
-        Intent intent = new Intent(this, ActivityAbout.class);
+        Intent intent = new ActivityAbout
+                .Builder(ActivityMainMenu.this)
+                .build();
         startActivity(intent);
     }
 
