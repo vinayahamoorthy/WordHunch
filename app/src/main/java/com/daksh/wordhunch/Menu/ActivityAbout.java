@@ -37,6 +37,37 @@ public class ActivityAbout extends AppCompatActivity {
     //A custom tabs client to warm up the custom tab implementation before the URL is actually loaded
     private CustomTabsClient client;
     private CustomTabsIntent customTabsIntent;
+    private CustomTabsSession session;
+
+    //A custom tab service connection associated with the custom tab used to open github links
+    private CustomTabsServiceConnection serviceConnection = new CustomTabsServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            client = null;
+        }
+
+        @Override
+        public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+            ActivityAbout.this.client = client;
+
+            //warm up the custom tab
+            client.warmup(1);
+            //Create a new session
+            session = client.newSession(new CustomTabsCallback());
+            //Create a new bundle and add the libraries URL as a parcelable
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(CustomTabsService.KEY_URL, Uri.parse("https://github.com/dakshsrivastava/WordHunch/wiki/Open-Source-Libraries-used"));
+
+            //Create a new bundle and add the libraries url bundle to it to pass it as an argument
+            //to mayLaunchUrl method
+            List<Bundle> lsBundle = new ArrayList<>();
+            lsBundle.add(bundle);
+
+            //Build a custom tabs to view github project
+            String strUrl = "https://github.com/dakshsrivastava/WordHunch";
+            session.mayLaunchUrl(Uri.parse(strUrl), null, lsBundle);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +82,8 @@ public class ActivityAbout extends AppCompatActivity {
         super.onStart();
 
         //Custom tabs primary color
+        CustomTabsClient.bindCustomTabsService(ActivityAbout.this, getPackageName(), serviceConnection);
+
         int intColor = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
             intColor = getColor(R.color.orangeLight);
@@ -65,43 +98,12 @@ public class ActivityAbout extends AppCompatActivity {
             intSecondaryColor = getResources().getColor(R.color.orangeDark);
 
         //Build a custom tabs intent using a builder
-        customTabsIntent = new CustomTabsIntent.Builder()
+        customTabsIntent = new CustomTabsIntent.Builder(session)
                 .setToolbarColor(intColor)
                 .setSecondaryToolbarColor(intSecondaryColor)
                 .setInstantAppsEnabled(false)
                 .setShowTitle(true)
                 .build();
-
-        CustomTabsClient.bindCustomTabsService(ActivityAbout.this, getPackageName(), new CustomTabsServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                client = null;
-            }
-
-            @Override
-            public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
-                ActivityAbout.this.client = client;
-            }
-        });
-
-        if(client != null) {
-            //warm up the custom tab
-            client.warmup(1);
-            //Create a new session
-            CustomTabsSession session = client.newSession(new CustomTabsCallback());
-            //Create a new bundle and add the libraries URL as a parcelable
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(CustomTabsService.KEY_URL, Uri.parse("https://github.com/dakshsrivastava/WordHunch/wiki/Open-Source-Libraries-used"));
-
-            //Create a new bundle and add the libraries url bundle to it to pass it as an argument
-            //to mayLaunchUrl method
-            List<Bundle> lsBundle = new ArrayList<>();
-            lsBundle.add(bundle);
-
-            //Build a custom tabs to view github project
-            String strUrl = "https://github.com/dakshsrivastava/WordHunch";
-            session.mayLaunchUrl(Uri.parse(strUrl), null, lsBundle);
-        }
     }
 
     @Override

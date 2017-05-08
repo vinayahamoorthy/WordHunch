@@ -4,4 +4,8 @@
     <style name="MyTheme.About" parent="AppTheme">
         <item name="android:statusBarColor">@color/orangeDark</item>
     </style>
+
+    <style name="MyTheme.Settings" parent="AppTheme">
+        <item name="android:statusBarColor">@color/cyanDark</item>
+    </style>
 </resources>

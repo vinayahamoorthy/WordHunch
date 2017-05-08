@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -93,6 +94,14 @@ public class ActivityMainMenu extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @OnClick(R.id.menu_settings)
+    public void onMenuSettings(View view) {
+        Intent intent = new ActivitySettings
+                .Builder(ActivityMainMenu.this)
+                .build();
+        startActivity(intent);
+    }
+
     //MainMenu is used in associated with a builder pattern. This is done so as to ensure all
     //prerequisite parameters are sent to the activity that are required to ensure its proper
     //functioning. This ensures even when someone else than the primary developer works on this activity.
@@ -124,8 +133,7 @@ public class ActivityMainMenu extends AppCompatActivity {
          * @return Intent that may be used to start the RingActivity.
          */
         public Intent build() {
-            Intent intent = new Intent(context, ActivityMainMenu.class);
-            return intent;
+            return new Intent(context, ActivityMainMenu.class);
         }
     }
 }

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="3"
+    android:orientation="vertical"
+    tools:context="com.daksh.wordhunch.Menu.ActivitySettings">
+
+    <LinearLayout
+        android:id="@+id/SettingsPage_introBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/effect_ripple_cyan_sharp"
+        android:clickable="true"
+        android:focusable="true"
+        android:descendantFocusability="beforeDescendants">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SettingsPage_Header"
+            android:textColor="@color/WhiteTextColorOne"
+            android:textSize="40sp"
+            android:focusable="false"
+            android:clickable="false"
+            android:fontFamily="sans-serif" />
+
+        <TextView
+            android:id="@+id/SettingsPage_introBox_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="false"
+            android:text="@string/SettingsPage_Intro"
+            android:textColor="@color/WhiteTextColorOne"
+            android:textAppearance="@style/MyTextAppearance.Large.White" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/SettingsPage_heading_version_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
+
+        <ImageView
+            android:id="@+id/SettingsPage_volume_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_volume_low"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"/>
+
+        <TextView
+            android:id="@+id/SettingsPage_heading_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/SettingsPage_volume_image"
+            android:layout_alignStart="@+id/SettingsPage_seekbar_volume"
+            android:textAppearance="@style/MyTextAppearance.Small.Black"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Game volume"/>
+
+        <SeekBar
+            android:id="@+id/SettingsPage_seekbar_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/SettingsPage_volume_image"
+            android:layout_below="@id/SettingsPage_heading_music"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="5dp"
+            android:max="100"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/purpleLight"
+        android:alpha="0.2"/>
+
+    <RelativeLayout
+        android:id="@+id/SettingsPage_heading_vibration_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:background="?attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/SettingsPage_vibration_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_vibration"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"/>
+
+        <TextView
+            android:id="@+id/SettingsPage_heading_vibration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Vibration"
+            android:gravity="center_vertical"
+            android:layout_alignTop="@id/SettingsPage_vibration_image"
+            android:layout_alignBottom="@id/SettingsPage_vibration_image"
+            android:layout_toEndOf="@id/SettingsPage_vibration_image"
+            android:layout_toStartOf="@+id/SettingsPage_switch_vibration"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/SettingsPage_switch_vibration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/purpleLight"
+        android:alpha="0.2"/>
+
+</LinearLayout>

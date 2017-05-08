@@ -16,8 +16,7 @@
             android:name=".Menu.ActivityMainMenu"
             android:screenOrientation="portrait"
             android:theme="@style/MyTheme.MainMenu"
-            tools:ignore="InnerclassSeparator">
-        </activity>
+            tools:ignore="InnerclassSeparator"/>
         <activity
             android:name=".Rink.RingActivity"
             android:screenOrientation="portrait"
@@ -26,8 +25,8 @@
         <activity
             android:name=".Menu.ActivityAbout"
             android:screenOrientation="portrait"
-            tools:ignore="InnerclassSeparator"
-            android:theme="@style/MyTheme.About"/>
+            android:theme="@style/MyTheme.About"
+            tools:ignore="InnerclassSeparator" />
         <activity
             android:name=".Splash.SplashActivity"
             android:screenOrientation="portrait"
@@ -37,6 +36,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Menu.ActivitySettings"
+            android:theme="@style/MyTheme.Settings"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="ec46ea8824785d4b2d333ca4089e9a45cecaedf6" />

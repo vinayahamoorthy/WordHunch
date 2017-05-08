@@ -26,6 +26,11 @@
         <item name="android:textSize">@dimen/abc_text_size_menu_material</item>
     </style>
 
+    <style name="MyTextAppearance.Small.Black" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/blackTextColorOne</item>
+        <item name="android:textSize">@dimen/abc_text_size_caption_material</item>
+    </style>
+
     <style name="MyTextAppearance.Large.White" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/WhiteTextColorOne</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>
