@@ -1,5 +1,7 @@
 ## WordHunch ##
 
+[Download latest available version](https://sourceforge.net/projects/wordhunch/files/WordHunch%20-%20v0.0.1.apk/download)
+
 WordHunch is a word guessing game that you can play on your own or with other players across the web. It gives the user two alphabets to begin with and the user is to make as many words as possible which start with the two letters. For each word that is made by the user, points are allocated in accordance with how points are won in the game of scrabble - Each letter carries an associated point.
 
 The catch is to accumulate as many points as possible before the timer runs out. To make things interesting, there are certain thresholds which when crossed in terms of points, grants users powerups to multiply & increase their points. Powerups such as Double word Score, Triple word score and Double total score are up for grabs. 
@@ -27,66 +29,9 @@ The application is under active development and parts or gameplay may change as 
 
 ## Open Source Libraries ##
 * [RetroFit](https://github.com/square/retrofit)
-
-        Copyright 2013 Square, Inc.
-
-        Licensed under the Apache License, Version 2.0 (the "License");
-        you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at
-
-           http://www.apache.org/licenses/LICENSE-2.0
-
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-        
 * [OkHttp](https://github.com/square/okhttp)
-
-        Copyright 2016 Square, Inc.
-
-        Licensed under the Apache License, Version 2.0 (the "License");
-        you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at
-
-           http://www.apache.org/licenses/LICENSE-2.0
-
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-
-* [LinearTimer (GPL v3)](https://github.com/krtkush/LinearTimer)
+* [LinearTimer](https://github.com/krtkush/LinearTimer)
 * [GreenDao](https://github.com/greenrobot/greenDAO)
-
-        Copyright 2014 Markus Junginger, greenrobot.
-
-        Licensed under the Apache License, Version 2.0 (the "License");
-        you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at
-
-           http://www.apache.org/licenses/LICENSE-2.0
-
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
-        
 * [EventBus](https://github.com/greenrobot/EventBus)
-
-        Copyright 2012-16 Markus Junginger, greenrobot.
-
-        Licensed under the Apache License, Version 2.0 (the "License");
-        you may not use this file except in compliance with the License.
-        You may obtain a copy of the License at
-
-           http://www.apache.org/licenses/LICENSE-2.0
-
-        Unless required by applicable law or agreed to in writing, software
-        distributed under the License is distributed on an "AS IS" BASIS,
-        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-        See the License for the specific language governing permissions and
-        limitations under the License.
+* [SQLite Cipher](https://github.com/sqlcipher/sqlcipher)
+* [Firebase Job Dispatcher](https://github.com/firebase/firebase-jobdispatcher-android)
