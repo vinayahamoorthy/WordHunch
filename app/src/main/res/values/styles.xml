@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -6,16 +6,22 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_action_back</item>
     </style>
 
+    <!-- universal toolbar title style -->
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+        parent="MyTextAppearance.Large.White" tools:override="true">
+        <item name="android:textColor">@color/WhiteTextColorOne</item>
+    </style>
+
+    <!-- Main menu activity theme -->
     <style name="MyTheme.MainMenu" parent="AppTheme">
         <item name="android:background">@color/blackTransparentBackground</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="MyTheme.About" parent="AppTheme">
-    </style>
-
+    <!-- Text appearance styles -->
     <style name="MyTextAppearance.Large.Black" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/blackTextColorTwo</item>
         <item name="android:textSize">@dimen/abc_text_size_medium_material</item>

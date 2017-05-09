@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.TextAppearance.Widget.AppCompat.Toolbar.Title"
+        parent="MyTextAppearance.Large.White" tools:override="true">
+        <item name="android:textColor">@color/WhiteTextColorOne</item>
+        <item name="android:titleTextColor">@color/WhiteTextColorOne</item>
+    </style>
+</resources>

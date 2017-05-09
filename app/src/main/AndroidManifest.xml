@@ -28,6 +28,11 @@
             android:theme="@style/MyTheme.About"
             tools:ignore="InnerclassSeparator" />
         <activity
+            android:name=".Menu.ActivitySettings"
+            android:theme="@style/MyTheme.Settings"
+            android:screenOrientation="portrait"
+            tools:ignore="InnerclassSeparator"/>
+        <activity
             android:name=".Splash.SplashActivity"
             android:screenOrientation="portrait"
             tools:ignore="InnerclassSeparator">
@@ -36,11 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Menu.ActivitySettings"
-            android:theme="@style/MyTheme.Settings"
-            android:screenOrientation="portrait"
-            tools:ignore="InnerclassSeparator"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

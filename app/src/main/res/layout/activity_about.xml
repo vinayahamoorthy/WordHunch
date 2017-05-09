@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:weightSum="2"
     tools:context="com.daksh.wordhunch.Menu.ActivityAbout">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/aboutPage_introBox"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/effect_ripple_orange_sharp"
-        android:clickable="true"
-        android:focusable="true"
-        android:descendantFocusability="beforeDescendants">
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_sharp_corners_orange">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/AboutPage_Heading"
+            android:layout_marginStart="15dp"
             android:textColor="@color/WhiteTextColorOne"
-            android:textSize="40sp"
+            android:textSize="30sp"
             android:focusable="false"
             android:clickable="false"
             android:fontFamily="sans-serif" />
@@ -37,10 +36,12 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             android:clickable="false"
+            android:layout_marginStart="14dp"
+            android:paddingBottom="10dp"
             android:text="@string/AboutPage_Intro"
             android:textColor="@color/WhiteTextColorOne"
             android:textAppearance="@style/MyTextAppearance.Large.White" />
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
         android:id="@+id/aboutPage_heading_version_box"
@@ -139,4 +140,10 @@
             android:layout_below="@id/aboutPage_heading_libraries"
             android:text="@string/AboutPage_text_libraries"/>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/purpleLight"
+        android:alpha="0.2"/>
 </LinearLayout>

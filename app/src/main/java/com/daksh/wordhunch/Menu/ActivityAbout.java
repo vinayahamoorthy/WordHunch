@@ -13,9 +13,11 @@ import android.support.customtabs.CustomTabsService;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,6 +35,7 @@ public class ActivityAbout extends AppCompatActivity {
     //Bind views using butter knife
     @BindView(R.id.aboutPage_text_version) TextView txVersion;
     @BindView(R.id.aboutPage_introBox_email) TextView txEmail;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     //A custom tabs client to warm up the custom tab implementation before the URL is actually loaded
     private CustomTabsClient client;
@@ -75,6 +78,11 @@ public class ActivityAbout extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         //Bind the views
         ButterKnife.bind(this);
+
+        //setup an action bar
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
     }
 
     @Override
@@ -165,6 +173,16 @@ public class ActivityAbout extends AppCompatActivity {
 
         //Launch the tabs
         customTabsIntent.launchUrl(ActivityAbout.this, Uri.parse(strUrl));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //About Activity is used in association with a builder pattern. This is done so as to ensure all
