@@ -12,6 +12,7 @@
         android:id="@+id/SettingsPage_introBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:transitionName="SettingsPage_introBox"
         android:background="@drawable/shape_sharp_corners_cyan">
 
         <android.support.v7.widget.Toolbar
