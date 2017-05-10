@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.daksh.wordhunch.R;
+import com.daksh.wordhunch.Util.SettingsUtil;
 import com.daksh.wordhunch.WordHunch;
 
 public class Vibrator {
@@ -51,7 +52,9 @@ public class Vibrator {
      * is not valid.
      */
     public void vibrateInvalidInput() {
-        Animation shake = AnimationUtils.loadAnimation(WordHunch.getContext(), R.anim.invalidinput_shake);
-        androidVibrator.vibrate(shake.getDuration());
+        if(SettingsUtil.isVibrationEnabled()) {
+            Animation shake = AnimationUtils.loadAnimation(WordHunch.getContext(), R.anim.invalidinput_shake);
+            androidVibrator.vibrate(shake.getDuration());
+        }
     }
 }

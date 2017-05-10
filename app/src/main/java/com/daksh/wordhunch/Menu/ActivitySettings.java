@@ -45,19 +45,11 @@ public class ActivitySettings extends AppCompatActivity implements SeekBar.OnSee
         getSupportActionBar().setTitle("");
 
         //Set initial position based on saved value
-        volumeSeekBar.setProgress(SettingsUtil.getVolume());
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        volumeSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        volumeSeekBar.setProgress(SettingsUtil.getVolume());
 
-        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && !audioManager.isVolumeFixed())
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            audioManager.setStreamVolume(
-                    AudioManager.STREAM_MUSIC,
-                    SettingsUtil.getVolume() != 0
-                            ? SettingsUtil.getVolume() / (SettingsUtil.getVolume() / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
-                            : 0,
-                    AudioManager.RINGER_MODE_NORMAL
-            );
+        onProgressChanged(volumeSeekBar, SettingsUtil.getVolume(), false);
 
         //Set saved value for Vibration
         vibrationSwitch.setOnCheckedChangeListener(ActivitySettings.this);
@@ -73,24 +65,22 @@ public class ActivitySettings extends AppCompatActivity implements SeekBar.OnSee
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && !audioManager.isVolumeFixed())
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            audioManager.setStreamVolume(
-                    AudioManager.STREAM_MUSIC,
-                    progress != 0
-                            ? SettingsUtil.getVolume() / (SettingsUtil.getVolume() / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC))
-                            : 0,
-                    AudioManager.RINGER_MODE_NORMAL
-            );
-
         if(progress == 0)
             imgSpeaker.setImageResource(R.drawable.ic_volume_mute);
-        else if(progress > 50)
+        else if(progress > (audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * 0.75))
             imgSpeaker.setImageResource(R.drawable.ic_volume_loud);
         else
             imgSpeaker.setImageResource(R.drawable.ic_volume_low);
+
+        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && !audioManager.isVolumeFixed())
+                || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            audioManager.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    seekBar.getProgress(),
+                    AudioManager.RINGER_MODE_NORMAL
+            );
+        }
     }
 
     @Override

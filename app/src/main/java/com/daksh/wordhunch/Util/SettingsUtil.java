@@ -2,6 +2,7 @@ package com.daksh.wordhunch.Util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 
 import com.daksh.wordhunch.WordHunch;
 
@@ -69,6 +70,11 @@ public class SettingsUtil {
             preferences = WordHunch.getContext().getSharedPreferences(SETTINGS_PREF, Context.MODE_PRIVATE);
 
         //Return the volume integer | If not found, assume just 50
-        return preferences.getInt(SETTINGS_PREF_VOLUME, 50);
+        if(preferences.contains(SETTINGS_PREF_VOLUME))
+            return preferences.getInt(SETTINGS_PREF_VOLUME, 7);
+        else {
+            AudioManager audioManager = (AudioManager) WordHunch.getContext().getSystemService(Context.AUDIO_SERVICE);
+            return audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) - 2;
+        }
     }
 }
