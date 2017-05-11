@@ -6,5 +6,7 @@ public enum SoundStore {
 
     RejectEntry,
 
-    TimerSounds
+    TimerSounds,
+
+    TapSounds
 }

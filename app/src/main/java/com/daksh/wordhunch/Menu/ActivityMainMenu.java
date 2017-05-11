@@ -12,6 +12,7 @@ import com.daksh.wordhunch.Menu.Events.IsFirstRunEvent;
 import com.daksh.wordhunch.R;
 import com.daksh.wordhunch.Rink.Events.RequestChallengeEvent;
 import com.daksh.wordhunch.Rink.RingActivity;
+import com.daksh.wordhunch.Rink.Sounds.SoundManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +34,9 @@ public class ActivityMainMenu extends AppCompatActivity {
     //Depending on the response, the FirtBlood (R.string.play_achievement_FirstBlood)
     //achievement will be unlocked or not by sending a param to the RinkActivity activity.
     private boolean isFirstTime = true;
+
+    //A sound manager object through which all sound files in the game are acessed.
+    private SoundManager soundManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,18 @@ public class ActivityMainMenu extends AppCompatActivity {
         //Send Event to Request New challenge | Will be received in RinkSuggestions class
         if(EventBus.getDefault().hasSubscriberForEvent(RequestChallengeEvent.class))
             EventBus.getDefault().post(new RequestChallengeEvent());
+
+        soundManager = new SoundManager.Builder()
+                //use the sound manager for tap sounds only
+                .setupTapSounds()
+                .build();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //release sources
+        soundManager.release();
     }
 
     @Override
@@ -76,6 +92,9 @@ public class ActivityMainMenu extends AppCompatActivity {
     @OnClick(R.id.menu_start)
     public void onMenuStart() {
 
+        //play the tap sound
+        soundManager.getTapSounds().playSound();
+
         Intent intent = new RingActivity.Builder(this)
                 .setFirstTime(isFirstTime)
                 .build();
@@ -88,6 +107,9 @@ public class ActivityMainMenu extends AppCompatActivity {
      */
     @OnClick(R.id.menu_about)
     public void onMenuAbout() {
+        //play the tap sound
+        soundManager.getTapSounds().playSound();
+
         Intent intent = new ActivityAbout
                 .Builder(ActivityMainMenu.this)
                 .build();
@@ -96,6 +118,10 @@ public class ActivityMainMenu extends AppCompatActivity {
 
     @OnClick(R.id.menu_settings)
     public void onMenuSettings(View view) {
+
+        //play the tap sound
+        soundManager.getTapSounds().playSound();
+
         Intent intent = new ActivitySettings
                 .Builder(ActivityMainMenu.this)
                 .build();

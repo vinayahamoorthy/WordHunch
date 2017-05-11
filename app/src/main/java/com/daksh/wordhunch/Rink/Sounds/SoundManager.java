@@ -30,6 +30,11 @@ public class SoundManager {
     private SMTimerEnd smTimerEnd;
 
     /**
+     * The TapSound SoundManager auxiliary file that is used to play sounds related to user interaction
+     */
+    private SMTapSound smTapSound;
+
+    /**
      * The soundManager Constructor that calls the appropriate initialization method based on
      * the version of SDK running on the user's device.
      */
@@ -76,6 +81,18 @@ public class SoundManager {
     }
 
     /**
+     * Returns the smTapSound object which is used to play whatever soundfles are associated
+     * with tap sounds throughout the app
+     * ex : when user taps on settings / play / about / leaderboard buttons
+     * @return An smTapSound object that may be used to access soundfiles associated with
+     * the object
+     */
+    @NonNull
+    public SMTapSound getTapSounds() {
+       return smTapSound;
+    }
+
+    /**
      * A method that returns the sound pool | Probably won't be used, kept for god measure
      * @return Returns the sound pool being used to play the gamified sounds
      */
@@ -118,6 +135,10 @@ public class SoundManager {
      */
     public void release() {
         soundPool.release();
+        smScoreIncrease = null;
+        smTapSound = null;
+        smTimerEnd = null;
+        smUserEntries = null;
     }
 
 
@@ -202,6 +223,28 @@ public class SoundManager {
         }
 
         /**
+         * A method to setup the sound resources to be used when a user taps on any items in the menu
+         * or anywhere else.
+         * The sound file for this particular function is a 1 second long obstruction type sound that is
+         * played when the user taps on 'submit/enter/go' but the entry is not valid
+         * @return Builder Returns the builder class for the builder implementation.
+         */
+        public Builder setupTapSounds() {
+            if(soundStores != null)
+                for(int intCounter = 0 ; intCounter < soundStores.length ; intCounter++)
+                    if(soundStores[intCounter] == SoundStore.TapSounds)
+                        return this;
+                    else if(soundStores[intCounter] == null) {
+                        //If the program execution reaches null, soundStores does not have SoundStore.ScoreIncrease
+                        //Hence, we add it to the soundStores object
+                        soundStores[intCounter] = SoundStore.TapSounds;
+                        break;
+                    }
+
+            return this;
+        }
+
+        /**
          * The build method is executed to build all types of sounds requested by the user and the
          * sound manager class. It is used to assign stream IDs / Sound IDs to the files
          * which are in turn used later to perform operations on the playback.
@@ -228,6 +271,11 @@ public class SoundManager {
                 if (soundStore != null && soundStore.equals(SoundStore.TimerSounds))
                     //initialize
                     soundManager.smTimerEnd = new SMTimerEnd(soundPool);
+
+                //Test if SoundStore contains TimerEnd API
+                if (soundStore != null && soundStore.equals(SoundStore.TapSounds))
+                    //initialize
+                    soundManager.smTapSound = new SMTapSound(soundPool);
             }
             //Return the soundManager to the user so the only point of contact to play sounds is the SoundManager
             return soundManager;

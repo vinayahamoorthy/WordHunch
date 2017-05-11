@@ -10,4 +10,9 @@
     <style name="MyTheme.Settings" parent="AppTheme">
         <item name="android:statusBarColor">@color/cyanDark</item>
     </style>
+
+    <!-- Settings page -->
+    <style name="MyTheme.Rink" parent="AppTheme">
+        <item name="android:statusBarColor">@color/tealDark</item>
+    </style>
 </resources>
